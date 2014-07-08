@@ -14,25 +14,25 @@ class Background extends Behaviour implements IRenderable
 
 	public function new(entity : Entity)
 	{
-		super(entity);
+		super(entity);	
 		Engine.Add(this);
 	}
 	
 	public function OnRender()
 	{
-		trace("ok");
-		if (!entity.destroyed)
-		{	
-			for(y in 0...Math.ceil(600/size))
-			{
-				for(x in 0...Math.ceil(800/size))
-				{
-					var v = Math.round(25 + Math.sin(clock.getTime() * 10 + x + y) * 3 + Math.sin(clock.getTime() * 5 + x - y) * 3);
-					var rgb = v + (v << 8) + (v << 16);
-					canvas.fillStyle = "#" + StringTools.hex(rgb, 6);
-					canvas.fillRect(x*size,y*size,size,size); 
-				}
-			}
-		}
+		//if (!entity.destroyed)
+		//{	
+			//var time = clock.getTime();
+			//for(y in 0...Math.ceil(600/size))
+			//{
+				//for(x in 0...Math.ceil(800/size))
+				//{
+					//var v = Math.round(25 + Math.sin(time * 10 + x + y) * 3 + Math.sin(time * 5 + x - y) * 3);
+					//var rgb = v + (v << 8) + (v << 16);
+					//canvas.fillStyle = "#" + StringTools.hex(rgb, 6);
+					//canvas.fillRect(x*size-1,y*size-1,size+2,size+2); 
+				//}
+			//}
+		//}
 	}
 }
