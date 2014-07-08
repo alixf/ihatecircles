@@ -14,6 +14,7 @@ import js.Browser;
 import js.html.Image;
 import haxor.math.Quaternion;
 import haxor.physics.Physics;
+import haxor.physics.SphereCollider;
 
 class Game extends Application implements IRenderable
 {
@@ -119,6 +120,8 @@ class Game extends Application implements IRenderable
 		
 		bullet.AddComponent(RigidBody);
 		bullet.rigidbody.velocity = new Vector3(velX, velY, 0.0);
+		var collider = bullet.AddComponent(SphereCollider);
+		collider.radius = 15.0;
 		
 		var bulletBehaviour = bullet.AddComponent(Bullet);
 		bulletBehaviour.myId = id;
@@ -151,6 +154,8 @@ class Game extends Application implements IRenderable
 		
 		enemy.AddComponent(RigidBody);
 		enemy.rigidbody.velocity = new Vector3(velX, velY, 0.0);
+		var collider = enemy.AddComponent(SphereCollider);
+		collider.radius = 50.0;
 		
 		var enemyBehaviour = enemy.AddComponent(Enemy);
 		enemyBehaviour.myId = id;
