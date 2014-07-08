@@ -6,8 +6,13 @@
 		<meta name="description" content="" />
 		<script src="http://cdn.peerjs.com/0.3/peer.js"></script>
 	</head>
-	<body style="margin : 0px;">
-		<canvas width="800" height="600" id="canvas"></canvas>
+	<body style="margin : 0px; background-color : #222;">
+		<div id="container" style="position : relative; display : block; margin : 20px auto; border : 3px solid black; box-shadow : 0px 0px 5px #000; width : 800px; height : 600px;">
+			<canvas width="800" height="600" id="canvas"></canvas>
+			<div id="ui" style="position : absolute; top : 0px; left : 0px; color : #FFF">
+				<div id="log"></div>
+			</div>
+		</div>
 		<script src="IHateCircle.js" application="Game" ui="true"></script>
 	</body>
 </html>

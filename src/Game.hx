@@ -18,11 +18,14 @@ import haxor.physics.Physics;
 class Game extends Application implements IRenderable
 {
 	public var network : Network;
+	public var canvasElement : CanvasElement;
 	public var canvas : CanvasRenderingContext2D;
 	public var playerImages : Array<Image>;
 	public var bulletImages : Array<Image>;
+	public var enemyImages : Array<Image>;
 	public var players = new Map<Int, Entity>();
 	public var bullets = new Map<Int, Entity>();
+	public var enemies = new Map<Int, Entity>();
 	
 	public static function main()
 	{
@@ -38,17 +41,21 @@ class Game extends Application implements IRenderable
 						Asset.LoadImage("bulletImage1", "assets/bullet1.png"),
 						Asset.LoadImage("bulletImage2", "assets/bullet2.png"),
 						Asset.LoadImage("bulletImage3", "assets/bullet3.png")];
+		enemyImages =  [Asset.LoadImage("enemyImage0", "assets/enemy0.png"),
+						Asset.LoadImage("enemyImage1", "assets/enemy1.png"),
+						Asset.LoadImage("enemyImage2", "assets/enemy2.png"),
+						Asset.LoadImage("enemyImage3", "assets/enemy3.png")];
 	}
 	
 	override function Initialize() : Void
 	{
 		var networkEntity = new Entity();
 		network = cast networkEntity.AddComponent(Network);
-		network.Connect("ws://localhost", 2014, "", 0, false);
+		network.Connect("ws://192.168.0.11", 2014, "", 0, false);
 		network.game = this;
 		Network.instance = network;
 		
-		var canvasElement : CanvasElement = cast Browser.document.getElementById("canvas");
+		canvasElement = cast Browser.document.getElementById("canvas");
 		canvas = canvasElement.getContext2d();
 		
 		stage.visible = false;
@@ -83,11 +90,12 @@ class Game extends Application implements IRenderable
 		players.set(id, player);
 	}
 	
-	public function updatePlayer(id : Int, x : Float, y : Float, rotation : Float)
+	public function updatePlayer(id : Int, x : Float, y : Float, rotation : Float, velX : Float, velY : Float)
 	{
 		var player = players.get(id);
 		player.transform.position = new Vector3(x, y, 0.0);
 		player.transform.rotation = Quaternion.FromAxisAngle(new Vector3(1, 0, 0), rotation);
+		player.rigidbody.velocity = new Vector3(velX, velY, 0.0);
 	}
 	
 	public function removePlayer(id : Int)
@@ -101,7 +109,7 @@ class Game extends Application implements IRenderable
 	}
 	
 	public function addBullet(id : Int, x : Float, y : Float, velX : Float, velY : Float)
-	{		
+	{
 		var bullet = new Entity();
 		bullet.transform.position = new Vector3(x, y, 0.0);
 		
@@ -130,6 +138,25 @@ class Game extends Application implements IRenderable
 			//Resource.Destroy(bullet);
 			bullets.remove(id);
 		}
+	}
+	
+	public function addEnemy(id : Int, color : Int, x : Float, y : Float, velX : Float, velY : Float)
+	{
+		var enemy = new Entity();
+		enemy.transform.position = new Vector3(x, y, 0.0);
+		
+		var imageRenderer = enemy.AddComponent(ImageRenderer);
+		imageRenderer.canvas = canvas;
+		imageRenderer.image = enemyImages[0];
+		
+		enemy.AddComponent(RigidBody);
+		enemy.rigidbody.velocity = new Vector3(velX, velY, 0.0);
+		
+		var enemyBehaviour = enemy.AddComponent(Enemy);
+		enemyBehaviour.myId = id;
+		enemyBehaviour.game = this;
+		
+		enemies.set(id, enemy);
 	}
 	
 	public function OnRender():Void

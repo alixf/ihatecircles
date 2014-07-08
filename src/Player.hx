@@ -2,6 +2,7 @@ package;
 import haxor.component.Behaviour;
 import haxor.core.Entity;
 import haxor.core.Engine;
+import haxor.core.IFixedUpdateable;
 import haxor.math.Quaternion;
 import haxor.math.Vector3;
 import haxor.core.IUpdateable;
@@ -9,7 +10,7 @@ import haxor.input.*;
 import haxor.core.Time;
 import haxor.math.Mathf;
 
-class Player extends Behaviour implements IUpdateable 
+class Player extends Behaviour implements IUpdateable
 {
 	var speed = 1500;
 	public var game : Game;
@@ -77,7 +78,7 @@ class Player extends Behaviour implements IUpdateable
 		//if(x > Lib.current.stage.stageWidth - display.width/2) x = Lib.current.stage.stageWidth - display.width/2;
 		//if(y > Lib.current.stage.stageHeight - display.height/2) y = Lib.current.stage.stageHeight - display.height/2;
 //
-		transform.rotation = Quaternion.FromAxisAngle(new Vector3(1, 0, 0), Math.atan2(Input.mouse.y - transform.position.y, Input.mouse.x - transform.position.x));
+		transform.rotation = Quaternion.FromAxisAngle(new Vector3(1, 0, 0), Math.atan2(Input.mouse.y - transform.position.y - game.canvasElement.getBoundingClientRect().top, Input.mouse.x - transform.position.x - game.canvasElement.getBoundingClientRect().left));
 
 		var vx = rigidbody.velocity.x;
 		var vy = rigidbody.velocity.y;
@@ -89,7 +90,7 @@ class Player extends Behaviour implements IUpdateable
 		vy = Mathf.Lerp(vy, 0.0, Time.deltaTime * 3.0);
 		rigidbody.velocity = new Vector3(vx, vy, 0);
 		
-		Network.instance.updatePosition(transform.position.x, transform.position.y, transform.rotation.euler.z);
+		Network.instance.updatePosition(transform.position.x, transform.position.y, transform.rotation.euler.z, rigidbody.velocity.x, rigidbody.velocity.y);
 //
 		if (Input.IsDown(KeyCode.Mouse0) && reloadClock.getTime() > 0.125)
 		{
