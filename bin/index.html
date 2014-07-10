@@ -3,15 +3,66 @@
 	<head>
 		<meta charset="utf-8"/>
 		<title>IHateCircle</title>
-		<meta name="description" content="" />
+		<link href='http://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
 		<script src="http://cdn.peerjs.com/0.3/peer.js"></script>
+		<style>
+			body
+			{
+				display : flex;
+				justify-content : center;
+			}
+			.container
+			{
+				flex : 0 0 800px;
+				flex.direction : column;
+			}
+			.player
+			{
+				flex : 1 1 25%;
+				color : black;
+				padding : 10px;
+				font-family: 'Kaushan Script', cursive;
+				font-size : 1.33em;
+			}
+			.player.empty
+			{
+				opacity : 0.1;
+			}
+			.player .score:before
+			{
+				content : "Score : ";
+			}
+			.p1 { background-color : #0088FF; }
+			.p2 { background-color : #D22929; }
+			.p3 { background-color : #4EAE38; }
+			.p4 { background-color : #C545A8; }
+			canvas
+			{
+				box-shadow : 0px 0px 5px #000;
+			}
+		</style>
 	</head>
-	<body style="margin : 0px; background-color : #222;">
-		<div id="container" style="position : relative; display : block; margin : 20px auto; border : 3px solid black; box-shadow : 0px 0px 5px #000; width : 800px; height : 600px;">
-			<canvas width="800" height="600" id="canvas"></canvas>
-			<div id="ui" style="position : absolute; top : 0px; left : 0px; color : #FFF">
-				<div id="log"></div>
+	<body style="margin : 0px; background-color : #222;">		
+		<div class="container">
+			<div id="score" style="display : flex;">
+				<div class="player p1">
+					<div class="name">test</div>
+					<div class="score">8</div>
+				</div>
+				<div class="player p2 empty">
+					<div class="name">Slot libre</div>
+					<div class="score">0</div>
+				</div>
+				<div class="player p3 empty">
+					<div class="name">Slot libre</div>
+					<div class="score">0</div>
+				</div>
+				<div class="player p4 empty">
+					<div class="name">Slot libre</div>
+					<div class="score">0</div>
+				</div>
 			</div>
+			<canvas width="800" height="600" id="canvas"></canvas>
 		</div>
 		<script src="IHateCircle.js" application="Game" ui="true"></script>
 	</body>

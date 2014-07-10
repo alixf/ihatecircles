@@ -8,11 +8,14 @@ import haxor.core.IUpdateable;
 import haxor.input.*;
 import haxor.core.Time;
 import haxor.math.Mathf;
+import physics.*;
 
-class Bullet extends Behaviour implements IUpdateable 
+class Bullet extends Behaviour implements IUpdateable implements ITriggerable
 {
-	var myId : Int;
-	var game : Game;
+	public var myId : Int;
+	public var game : Game;
+	public var playerId : Int;
+	public var color : Int;
 	
 	public function new(entity : Entity)
 	{
@@ -31,5 +34,14 @@ class Bullet extends Behaviour implements IUpdateable
 		{
 			game.removeBullet(myId);
 		}
+	}
+	
+	public function Trigger(c:Collider)
+	{
+	}
+	
+	override function OnDestroy()
+	{
+		Engine.Remove(this);
 	}
 }

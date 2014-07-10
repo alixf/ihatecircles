@@ -8,7 +8,7 @@ import js.html.CanvasRenderingContext2D;
 
 class Background extends Behaviour implements IRenderable
 {
-	private var clock = new Clock();
+	private var clock = 0.0;
 	public var canvas : CanvasRenderingContext2D;
 	public var size = 25;
 
@@ -22,7 +22,8 @@ class Background extends Behaviour implements IRenderable
 	{
 		//if (!entity.destroyed)
 		//{	
-			//var time = clock.getTime();
+			//clock += Time.deltaTime;
+			//var time = clock;
 			//for(y in 0...Math.ceil(600/size))
 			//{
 				//for(x in 0...Math.ceil(800/size))
@@ -34,5 +35,10 @@ class Background extends Behaviour implements IRenderable
 				//}
 			//}
 		//}
+	}
+	
+	override function OnDestroy()
+	{
+		Engine.Remove(this);
 	}
 }

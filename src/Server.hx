@@ -19,6 +19,7 @@ class Bullet
 {
 	public function new(){}
 	public var id : Int;
+	public var playerId : Int;
 	public var color : Int;
 	public var x : Float;
 	public var y : Float;
@@ -43,7 +44,7 @@ class Server extends TCPServer
 	public var enemies = new Map<Int, Enemy>();
 	public var bulletsId = 0;
 	public var enemiesId = 0;
-	public var colors = [0x0367A6, 0x048ABF, 0x47A62D, 0xF2B84B, 0xD98D30];
+	public var colors = [0x0367A6, 0x048ABF, 0x47A62D, 0xF2B84B];
 	
 	static function main()
 	{
@@ -93,7 +94,7 @@ class Server extends TCPServer
 			{
 				case Protocol.CTS_ADDPLAYER :		addPlayer(p_user, Std.parseInt(p_user.id), p_data.name);
 				case Protocol.CTS_UPDATEPLAYER :	updatePlayer(p_user, Std.parseInt(p_user.id), p_data.x, p_data.y, p_data.rotation, p_data.velX, p_data.velY);
-				case Protocol.CTS_ADDBULLET :		addBullet(p_user, Std.parseInt(p_user.id), p_data.x, p_data.y, p_data.velX, p_data.velY);
+				case Protocol.CTS_ADDBULLET :		addBullet(p_user, Std.parseInt(p_user.id), p_data.playerId, p_data.x, p_data.y, p_data.velX, p_data.velY);
 				case Protocol.CTS_REMOVEBULLET :	removeBullet(p_user, p_data.id);
 				case Protocol.CTS_REMOVEENEMY :		removeEnemy(p_user, p_data.id);
 			}
@@ -108,8 +109,7 @@ class Server extends TCPServer
 		player.x = 100 + Math.random() * 600;
 		player.y = 100 + Math.random() * 400;
 		player.rotation = Math.random() * 2 * Math.PI;
-		//player.color = colors[id % colors.length];
-		player.color = id % 4;
+		player.color = id % colors.length;
 		players.set(id, player);
 		
 		user.Send( { code : Protocol.STC_ADDSELFPLAYER, player : player } );
@@ -133,10 +133,17 @@ class Server extends TCPServer
 				otherUser.Send( { code : Protocol.STC_UPDATEPLAYER, id : player.id, x : player.x, y : player.y, rotation : player.rotation, velX : player.velX, velY : player.velY} );
 	}
 	
-	private function addBullet(user : ServerUser, id : Int, x : Float, y : Float, velX : Float, velY : Float)
+	private function addBullet(user : ServerUser, id : Int, playerId : Int, x : Float, y : Float, velX : Float, velY : Float)
 	{
+		if (id != playerId)
+		{
+			trace('Error : $id != $playerId');
+			return;
+		}
+
 		var bullet = new Bullet();
 		bullet.id = bulletsId++;
+		bullet.playerId = id;
 		bullet.x = x;
 		bullet.y = y;
 		bullet.velX = velX;
@@ -153,10 +160,10 @@ class Server extends TCPServer
 	}
 	
 	private function addEnemy()
-	{
+	{	
 		var enemy = new Enemy();
 		enemy.id = enemiesId++;
-		enemy.color = colors[Std.random(colors.length)];
+		enemy.color = Std.random(colors.length);
 		enemy.x = 100 + Math.random() * 600;
 		enemy.y = 100 + Math.random() * 400;
 		enemy.velX = 0;

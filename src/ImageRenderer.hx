@@ -1,5 +1,6 @@
 import haxor.component.Component;
 import haxor.core.Entity;
+import haxor.core.IDisposable;
 import haxor.core.IRenderable;
 import haxor.core.Engine;
 import js.html.CanvasRenderingContext2D;
@@ -22,9 +23,14 @@ class ImageRenderer extends Component implements IRenderable
 		{			
 			canvas.translate(transform.position.x, transform.position.y);
 			canvas.rotate(transform.rotation.euler.z);
-			canvas.drawImage(image, -image.naturalWidth/2, -image.naturalHeight/2, transform.scale.x * image.naturalWidth, transform.scale.y * image.naturalHeight);
+			canvas.drawImage(image, -image.naturalWidth/2 * transform.scale.x, -image.naturalHeight/2 * transform.scale.y, transform.scale.x * image.naturalWidth, transform.scale.y * image.naturalHeight);
 			canvas.rotate(-transform.rotation.euler.z);
 			canvas.translate(-transform.position.x, -transform.position.y);
 		}
+	}
+	
+	override function OnDestroy():Void
+	{
+		Engine.Remove(this);
 	}
 }

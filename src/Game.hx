@@ -1,8 +1,5 @@
 package;
 
-//import openfl.*;
-//import openfl.display.*;
-//import openfl.events.*;
 import haxor.core.*;
 import haxor.math.Vector2;
 import haxor.math.Vector3;
@@ -13,10 +10,9 @@ import js.html.CanvasRenderingContext2D;
 import js.Browser;
 import js.html.Image;
 import haxor.math.Quaternion;
-import haxor.physics.Physics;
-import haxor.physics.SphereCollider;
+import physics.*;
 
-class Game extends Application implements IRenderable
+class Game extends Application implements IRenderable implements IFixedUpdateable
 {
 	public var network : Network;
 	public var canvasElement : CanvasElement;
@@ -59,12 +55,14 @@ class Game extends Application implements IRenderable
 		canvasElement = cast Browser.document.getElementById("canvas");
 		canvas = canvasElement.getContext2d();
 		
+		trace(canvas);
+		
 		stage.visible = false;
 		if(canvas != null)
 			Engine.Add(this);
 		fps = 60;
 		
-		Physics.gravity = Vector3.zero;
+		haxor.physics.Physics.gravity = Vector3.zero;
 		
 		var backgroundEntity = new Entity();
 		var background : Background = cast backgroundEntity.AddComponent(Background);
@@ -79,11 +77,11 @@ class Game extends Application implements IRenderable
 		imageRenderer.image = playerImages[color%4];
 		var rigidbody = player.AddComponent(RigidBody);
 		
-		if (control)
-		{
-			var playerBehaviour = player.AddComponent(Player);
-			playerBehaviour.game = this;
-		}
+		var playerBehaviour = player.AddComponent(Player);
+		playerBehaviour.game = this;
+		playerBehaviour.myId = id;
+		playerBehaviour.control = control;
+		playerBehaviour.color = color % 4;
 		
 		player.transform.position = new Vector3(x, y, 0.0);
 		player.transform.rotation = Quaternion.FromAxisAngle(new Vector3(1, 0, 0), rotation);
@@ -109,23 +107,26 @@ class Game extends Application implements IRenderable
 		}
 	}
 	
-	public function addBullet(id : Int, x : Float, y : Float, velX : Float, velY : Float)
+	public function addBullet(id : Int, playerId : Int, x : Float, y : Float, velX : Float, velY : Float)
 	{
 		var bullet = new Entity();
 		bullet.transform.position = new Vector3(x, y, 0.0);
 		
 		var imageRenderer = bullet.AddComponent(ImageRenderer);
 		imageRenderer.canvas = canvas;
-		imageRenderer.image = bulletImages[0];
+		var color = players.get(playerId).GetComponent(Player).color;
+		imageRenderer.image = bulletImages[color];
 		
 		bullet.AddComponent(RigidBody);
 		bullet.rigidbody.velocity = new Vector3(velX, velY, 0.0);
-		var collider = bullet.AddComponent(SphereCollider);
-		collider.radius = 15.0;
+		var collider = bullet.AddComponent(Collider);
+		collider.radius = 10.0;
 		
 		var bulletBehaviour = bullet.AddComponent(Bullet);
 		bulletBehaviour.myId = id;
 		bulletBehaviour.game = this;
+		bulletBehaviour.playerId = playerId;
+		bulletBehaviour.color = color;
 		
 		bullets.set(id, bullet);
 	}
@@ -135,10 +136,10 @@ class Game extends Application implements IRenderable
 		var bullet = bullets.get(id);
 		if (bullet != null)
 		{
-			Engine.Remove(bullet.GetComponent(Bullet));
-			Engine.Remove(bullet.GetComponent(ImageRenderer));
-			Engine.Remove(bullet.GetComponent(RigidBody));
-			//Resource.Destroy(bullet);
+			Resource.Destroy(bullet.GetComponent(Bullet));
+			Resource.Destroy(bullet.GetComponent(RigidBody));
+			Resource.Destroy(bullet.GetComponent(ImageRenderer));
+			Resource.Destroy(bullet.GetComponent(Collider));
 			bullets.remove(id);
 		}
 	}
@@ -147,21 +148,29 @@ class Game extends Application implements IRenderable
 	{
 		var enemy = new Entity();
 		enemy.transform.position = new Vector3(x, y, 0.0);
+		enemy.transform.scale = new Vector3(0.25, 0.25, 1);
 		
 		var imageRenderer = enemy.AddComponent(ImageRenderer);
 		imageRenderer.canvas = canvas;
-		imageRenderer.image = enemyImages[0];
+		trace(color);
+		imageRenderer.image = enemyImages[color];
 		
 		enemy.AddComponent(RigidBody);
 		enemy.rigidbody.velocity = new Vector3(velX, velY, 0.0);
-		var collider = enemy.AddComponent(SphereCollider);
+		var collider = enemy.AddComponent(Collider);
 		collider.radius = 50.0;
 		
 		var enemyBehaviour = enemy.AddComponent(Enemy);
 		enemyBehaviour.myId = id;
 		enemyBehaviour.game = this;
+		enemyBehaviour.color = color;
 		
 		enemies.set(id, enemy);
+	}
+	
+	public function OnFixedUpdate() : Void
+	{
+		Physics.Update();
 	}
 	
 	public function OnRender():Void
@@ -169,5 +178,13 @@ class Game extends Application implements IRenderable
 		canvas.clearRect(0, 0, 800, 600);
 		//canvas.fillStyle="#DDDDDD";
 		//canvas.fillRect(0,0,800,600);
+		
+		//for (c in Physics.colliders)
+		//{			
+			//canvas.beginPath();
+			//canvas.arc(c.transform.position.x + c.center.x, c.transform.position.y + c.center.y, c.radius * (c.transform.scale.x + c.transform.scale.y) / 2 +2, 0, 2 * Math.PI, false);
+			//canvas.fillStyle = 'rgba(255,255,255,0.1)';
+			//canvas.fill();
+		//}
 	}
 }
