@@ -22,4 +22,22 @@ class UI
 	{
 		element.innerHTML += content;
 	}
+	
+	public function addPlayer(id : Int, name : String)
+	{
+		var playerElement = Browser.document.getElementById("p" + (id+1));
+		playerElement.className = "player";
+	}
+	public function removePlayer(id : Int)
+	{
+		var playerElement = Browser.document.getElementById("p" + (id+1));
+		playerElement.className = "player empty";
+		cast(playerElement.getElementsByClassName("score")[0], Element).innerHTML = "0";
+		cast(playerElement.getElementsByClassName("name")[0], Element).innerHTML = "Empty Slot";
+	}
+	public function setPlayerScore(id : Int, score : Float)
+	{
+		var playerElement = Browser.document.getElementById("p" + (id+1));
+		cast(playerElement.getElementsByClassName("score")[0], Element).innerHTML = ""+Std.int(score);
+	}
 }

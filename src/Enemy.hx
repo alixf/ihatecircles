@@ -34,6 +34,7 @@ class Enemy extends Behaviour implements IUpdateable implements ITriggerable
 		var bullet : Bullet = c.GetComponent(Bullet);
 		if (bullet != null)
 		{
+			Resource.Destroy(c.GetComponent(Collider));
 			Network.instance.hitEnemy(myId, bullet.myId);
 		}
 	}

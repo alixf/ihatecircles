@@ -117,7 +117,7 @@ class Server extends TCPServer
 		
 		
 		for (otherUser in users)
-			user.Send( { code : Protocol.STC_ADDPLAYER, player : player, self : user == otherUser});
+			otherUser.Send( { code : Protocol.STC_ADDPLAYER, player : player, self : user == otherUser});
 	}
 	
 	private function updatePlayer(user : ServerUser, id : Int, x : Float, y : Float, rotation : Float, velX : Float, velY : Float)

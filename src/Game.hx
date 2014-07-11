@@ -85,6 +85,8 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		player.transform.rotation = Quaternion.FromAxisAngle(new Vector3(1, 0, 0), rotation);
 		
 		players.set(id, player);
+		
+		UI.instance.addPlayer(id, name);
 	}
 	
 	public function updatePlayer(id : Int, x : Float, y : Float, rotation : Float, velX : Float, velY : Float)
@@ -102,6 +104,7 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		{
 			Resource.Destroy(player);
 			players.remove(id);
+			UI.instance.removePlayer(id);
 		}
 	}
 	
@@ -142,7 +145,8 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 			Resource.Destroy(bullet.GetComponent(Bullet));
 			Resource.Destroy(bullet.GetComponent(RigidBody));
 			Resource.Destroy(bullet.GetComponent(ImageRenderer));
-			Resource.Destroy(bullet.GetComponent(Collider));
+			if(bullet.GetComponent(Collider))
+				Resource.Destroy(bullet.GetComponent(Collider));
 			bullets.remove(id);
 		}
 	}
@@ -182,9 +186,12 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		}
 	}
 	
-	public function addScore(score : Float, playerId : Int)
+	public function addScore(playerId : Int, score : Float)
 	{
-		
+		trace("TEST : "+playerId);
+		var player = players.get(playerId).GetComponent(Player);
+		player.score += score;
+		UI.instance.setPlayerScore(playerId, player.score);
 	}
 	
 	public function OnFixedUpdate() : Void

@@ -17,6 +17,7 @@ class Player extends Behaviour implements IUpdateable
 	private var reloadClock = 0.0;
 	public var myId = 0;
 	public var control = false;
+	public var score = 0;
 	
 	public function new(entity : Entity)
 	{
