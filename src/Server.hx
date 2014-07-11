@@ -1,5 +1,6 @@
 import haxe.Json;
 import haxe.Serializer;
+import haxe.Timer;
 import haxor.net.server.TCPServer;
 import haxor.net.server.ServerUser;
 
@@ -49,6 +50,21 @@ class Server extends TCPServer
 	public var enemiesId = 1;
 	public var colors = [0x0367A6, 0x048ABF, 0x47A62D, 0xF2B84B];
 	
+	public var wave = 0;
+	public var enemyWaves =
+	[
+		{time : 0.100, 	data : { id : 1, color : 0, x : 100, y : 100, velX : 0, velY : 0, health : 5 }},
+		{time : 0.200, 	data : { id : 2, color : 0, x : 150, y : 100, velX : 0, velY : 0, health : 5 }},
+		{time : 0.300, 	data : { id : 3, color : 0, x : 200, y : 100, velX : 0, velY : 0, health : 5 }},
+		{time : 0.600, 	data : { id : 4, color : 0, x : 200, y : 150, velX : 0, velY : 0, health : 5 }},
+		{time : 0.700, 	data : { id : 5, color : 0, x : 200, y : 200, velX : 0, velY : 0, health : 5 }},
+		{time : 0.800, 	data : { id : 6, color : 0, x : 150, y : 200, velX : 0, velY : 0, health : 5 }},
+		{time : 1.000, 	data : { id : 7, color : 0, x : 100, y : 200, velX : 0, velY : 0, health : 5 }},
+		{time : 1.100, 	data : { id : 8, color : 0, x : 100, y : 150, velX : 0, velY : 0, health : 5 }},
+	];
+	public var timer : Timer;
+	public var startTime = 0.0;
+	
 	static function main()
 	{
 		var server = new Server(2014, false);
@@ -57,11 +73,42 @@ class Server extends TCPServer
 	override function new(port : Int, debug : Bool)
 	{
 		super(port, debug);
-		
-		var timer = new haxe.Timer(1000);
+	}
+	
+	
+	private function startGame()
+	{
+		startTime = Timer.stamp();
+		timer = new Timer(100);
 		timer.run = function()
 		{
 			addEnemy();
+		}
+	}
+
+	private function addEnemy()
+	{
+		var time = Timer.stamp() - startTime;
+		var nextEnemy = enemyWaves[wave];
+		
+		if (nextEnemy != null)
+		{
+			if (nextEnemy.time <= time)
+			{
+				wave++;
+				var enemy = new Enemy();
+				enemy.id = nextEnemy.data.id;
+				enemy.color = nextEnemy.data.color;
+				enemy.x = nextEnemy.data.x;
+				enemy.y = nextEnemy.data.y;
+				enemy.velX = nextEnemy.data.velX;
+				enemy.velY = nextEnemy.data.velY;
+				enemy.health = nextEnemy.data.health;
+				enemies.set(enemy.id, enemy);
+				
+				for (otherUser in users)
+					otherUser.Send( { code : Protocol.STC_ADDENEMY, enemy : enemy} );
+			}
 		}
 	}
 	
@@ -115,6 +162,8 @@ class Server extends TCPServer
 		player.color = id % colors.length;
 		players.set(id, player);
 		
+		if (startTime == 0.0)
+			startGame();
 		
 		for (otherUser in users)
 			otherUser.Send( { code : Protocol.STC_ADDPLAYER, player : player, self : user == otherUser});
@@ -156,22 +205,6 @@ class Server extends TCPServer
 	private function removeBullet(user : ServerUser, userId : Int, bulletId : Int)
 	{
 		bullets.remove(bulletId);
-	}
-	
-	private function addEnemy()
-	{	
-		var enemy = new Enemy();
-		enemy.id = enemiesId++;
-		enemy.color = Std.random(colors.length);
-		enemy.x = 100 + Math.random() * 600;
-		enemy.y = 100 + Math.random() * 400;
-		enemy.velX = 0;
-		enemy.velY = 0;
-		enemy.health = 5;
-		enemies.set(enemy.id, enemy);
-		
-		for (otherUser in users)
-			otherUser.Send( { code : Protocol.STC_ADDENEMY, enemy : enemy} );
 	}
 	
 	private function hitEnemy(user : ServerUser, userId : Int, enemyId : Int, bulletId : Int)
