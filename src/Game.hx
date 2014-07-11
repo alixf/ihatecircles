@@ -55,8 +55,6 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		canvasElement = cast Browser.document.getElementById("canvas");
 		canvas = canvasElement.getContext2d();
 		
-		trace(canvas);
-		
 		stage.visible = false;
 		if(canvas != null)
 			Engine.Add(this);
@@ -69,7 +67,7 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		background.canvas = canvas;
 	}
 	
-	public function addPlayer(control : Bool, id : Int, name : String, color : Int, x : Float, y : Float, rotation : Float)
+	public function addPlayer(id : Int, name : String, color : Int, x : Float, y : Float, rotation : Float, self : Bool)
 	{
 		var player = new Entity();
 		var imageRenderer = player.AddComponent(ImageRenderer);
@@ -80,7 +78,7 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		var playerBehaviour = player.AddComponent(Player);
 		playerBehaviour.game = this;
 		playerBehaviour.myId = id;
-		playerBehaviour.control = control;
+		playerBehaviour.control = self;
 		playerBehaviour.color = color % 4;
 		
 		player.transform.position = new Vector3(x, y, 0.0);
@@ -107,7 +105,7 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		}
 	}
 	
-	public function addBullet(id : Int, playerId : Int, x : Float, y : Float, velX : Float, velY : Float)
+	public function addBullet(id : Int, playerId : Int, x : Float, y : Float, velX : Float, velY : Float, own : Bool)
 	{
 		var bullet = new Entity();
 		bullet.transform.position = new Vector3(x, y, 0.0);
@@ -119,14 +117,19 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		
 		bullet.AddComponent(RigidBody);
 		bullet.rigidbody.velocity = new Vector3(velX, velY, 0.0);
-		var collider = bullet.AddComponent(Collider);
-		collider.radius = 10.0;
+		
+		if (own)
+		{
+			var collider = bullet.AddComponent(Collider);
+			collider.radius = 10.0;	
+		}
 		
 		var bulletBehaviour = bullet.AddComponent(Bullet);
 		bulletBehaviour.myId = id;
 		bulletBehaviour.game = this;
 		bulletBehaviour.playerId = playerId;
 		bulletBehaviour.color = color;
+		bulletBehaviour.own = own;
 		
 		bullets.set(id, bullet);
 	}
@@ -152,7 +155,6 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		
 		var imageRenderer = enemy.AddComponent(ImageRenderer);
 		imageRenderer.canvas = canvas;
-		trace(color);
 		imageRenderer.image = enemyImages[color];
 		
 		enemy.AddComponent(RigidBody);
@@ -166,6 +168,23 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		enemyBehaviour.color = color;
 		
 		enemies.set(id, enemy);
+	}
+	
+	public function removeEnemy(id : Int)
+	{
+		var enemy = enemies.get(id);
+		if (enemy != null)
+		{
+			Resource.Destroy(enemy.GetComponent(ImageRenderer));
+			Resource.Destroy(enemy.GetComponent(Collider));
+			Resource.Destroy(enemy.GetComponent(Enemy));
+			enemies.remove(id);
+		}
+	}
+	
+	public function addScore(score : Float, playerId : Int)
+	{
+		
 	}
 	
 	public function OnFixedUpdate() : Void

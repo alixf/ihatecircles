@@ -14,6 +14,7 @@ class Player
 	public var rotation : Float;
 	public var velX : Float;
 	public var velY : Float;
+	public var health : Int;
 }
 class Bullet
 {
@@ -25,6 +26,7 @@ class Bullet
 	public var y : Float;
 	public var velX : Float;
 	public var velY : Float;
+	public var power : Float;
 }
 class Enemy
 {
@@ -35,6 +37,7 @@ class Enemy
 	public var y : Float;
 	public var velX : Float;
 	public var velY : Float;
+	public var health : Float;
 }
 
 class Server extends TCPServer
@@ -42,8 +45,8 @@ class Server extends TCPServer
 	public var players = new Map<Int, Player>();
 	public var bullets = new Map<Int, Bullet>();
 	public var enemies = new Map<Int, Enemy>();
-	public var bulletsId = 0;
-	public var enemiesId = 0;
+	public var bulletsId = 1;
+	public var enemiesId = 1;
 	public var colors = [0x0367A6, 0x048ABF, 0x47A62D, 0xF2B84B];
 	
 	static function main()
@@ -67,7 +70,7 @@ class Server extends TCPServer
 		super.OnUserConnect(p_user);
 		
 		for (player in players)
-			p_user.Send( { code : Protocol.STC_ADDOTHERPLAYER, player : player } );
+			p_user.Send( { code : Protocol.STC_ADDPLAYER, player : player, self : false } );
 	}
 	
 	override function OnUserDisconnect(p_user : ServerUser) : Void 
@@ -95,8 +98,8 @@ class Server extends TCPServer
 				case Protocol.CTS_ADDPLAYER :		addPlayer(p_user, Std.parseInt(p_user.id), p_data.name);
 				case Protocol.CTS_UPDATEPLAYER :	updatePlayer(p_user, Std.parseInt(p_user.id), p_data.x, p_data.y, p_data.rotation, p_data.velX, p_data.velY);
 				case Protocol.CTS_ADDBULLET :		addBullet(p_user, Std.parseInt(p_user.id), p_data.playerId, p_data.x, p_data.y, p_data.velX, p_data.velY);
-				case Protocol.CTS_REMOVEBULLET :	removeBullet(p_user, p_data.id);
-				case Protocol.CTS_REMOVEENEMY :		removeEnemy(p_user, p_data.id);
+				case Protocol.CTS_REMOVEBULLET :	removeBullet(p_user, Std.parseInt(p_user.id), p_data.id);
+				case Protocol.CTS_HITENEMY :		hitEnemy(p_user, Std.parseInt(p_user.id), p_data.enemyId, p_data.bulletId);
 			}
 		}
 	}
@@ -112,11 +115,9 @@ class Server extends TCPServer
 		player.color = id % colors.length;
 		players.set(id, player);
 		
-		user.Send( { code : Protocol.STC_ADDSELFPLAYER, player : player } );
 		
 		for (otherUser in users)
-			if (user != otherUser)
-				otherUser.Send( { code : Protocol.STC_ADDOTHERPLAYER, player : player } );
+			user.Send( { code : Protocol.STC_ADDPLAYER, player : player, self : user == otherUser});
 	}
 	
 	private function updatePlayer(user : ServerUser, id : Int, x : Float, y : Float, rotation : Float, velX : Float, velY : Float)
@@ -136,10 +137,7 @@ class Server extends TCPServer
 	private function addBullet(user : ServerUser, id : Int, playerId : Int, x : Float, y : Float, velX : Float, velY : Float)
 	{
 		if (id != playerId)
-		{
-			trace('Error : $id != $playerId');
 			return;
-		}
 
 		var bullet = new Bullet();
 		bullet.id = bulletsId++;
@@ -148,15 +146,16 @@ class Server extends TCPServer
 		bullet.y = y;
 		bullet.velX = velX;
 		bullet.velY = velY;
+		bullet.power = 1;
 		bullets.set(bullet.id, bullet);
 		
 		for (otherUser in users)
-			otherUser.Send( { code : Protocol.STC_ADDBULLET, bullet : bullet } );
+			otherUser.Send( { code : Protocol.STC_ADDBULLET, bullet : bullet, own : otherUser == user } );
 	}
 	
-	private function removeBullet(user : ServerUser, id : Int)
+	private function removeBullet(user : ServerUser, userId : Int, bulletId : Int)
 	{
-		bullets.remove(id);
+		bullets.remove(bulletId);
 	}
 	
 	private function addEnemy()
@@ -168,14 +167,41 @@ class Server extends TCPServer
 		enemy.y = 100 + Math.random() * 400;
 		enemy.velX = 0;
 		enemy.velY = 0;
+		enemy.health = 5;
 		enemies.set(enemy.id, enemy);
 		
 		for (otherUser in users)
 			otherUser.Send( { code : Protocol.STC_ADDENEMY, enemy : enemy} );
 	}
 	
-	private function removeEnemy(user : ServerUser, id : Int)
+	private function hitEnemy(user : ServerUser, userId : Int, enemyId : Int, bulletId : Int)
 	{
-		enemies.remove(id);
+		var enemy = enemies.get(enemyId);
+		var bullet = bullets.get(bulletId);
+		var bulletColor = players.get(bullet.playerId).color;
+		
+		if (enemy != null && bullet != null)
+		{
+			if (enemy.color == bulletColor)
+			{
+				enemy.health -= bullet.power;
+				
+				if (enemy.health < 0)
+				{
+					for (otherUser in users)
+						otherUser.Send( { code : Protocol.STC_REMOVEMULTISCORE, bulletId : bulletId, enemyId : enemyId, score : 3, playerId : userId } );
+				}
+				else
+				{
+					for (otherUser in users)
+						otherUser.Send( { code : Protocol.STC_REMOVEMULTISCORE, bulletId : bulletId, enemyId : 0, score : 1, playerId : userId } );
+				}
+			}
+			else
+			{
+				for (otherUser in users)
+					otherUser.Send( { code : Protocol.STC_REMOVEMULTISCORE, bulletId : bulletId, enemyId : 0, score : 0, playerId : userId } );
+			}
+		}
 	}
 }

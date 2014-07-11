@@ -21,16 +21,15 @@ class Network extends haxor.net.client.Network
 		
 		switch(code)
 		{
-			case Protocol.STC_ADDSELFPLAYER :	game.addPlayer(true, data.player.id, data.player.name, data.player.color, data.player.x, data.player.y, data.player.rotation);
-			case Protocol.STC_ADDOTHERPLAYER :	game.addPlayer(false, data.player.id, data.player.name, data.player.color, data.player.x, data.player.y, data.player.rotation);
-			case Protocol.STC_UPDATEPLAYER :	game.updatePlayer(data.id, data.x, data.y, data.rotation, data.velX, data.velY);
-			case Protocol.STC_REMOVEPLAYER :	game.removePlayer(data.id);
-			case Protocol.STC_ADDBULLET : 		
-		trace(data.bullet.playerId);game.addBullet(data.bullet.id, data.bullet.playerId, data.bullet.x, data.bullet.y, data.bullet.velX, data.bullet.velY);
-			case Protocol.STC_ADDENEMY :		game.addEnemy(data.enemy.id, data.enemy.color, data.enemy.x, data.enemy.y, data.enemy.velX, data.enemy.velY);
-			//case Protocol.STC_UPDATEENEMY :		;
-			//case Protocol.STC_REMOVEENEMY :		;
-		}
+			case Protocol.STC_ADDPLAYER :			game.addPlayer(data.player.id, data.player.name, data.player.color, data.player.x, data.player.y, data.player.rotation, data.self);
+			case Protocol.STC_UPDATEPLAYER :		game.updatePlayer(data.id, data.x, data.y, data.rotation, data.velX, data.velY);
+			case Protocol.STC_REMOVEPLAYER :		game.removePlayer(data.id);
+			case Protocol.STC_ADDBULLET : 			game.addBullet(data.bullet.id, data.bullet.playerId, data.bullet.x, data.bullet.y, data.bullet.velX, data.bullet.velY, data.own);
+			case Protocol.STC_ADDENEMY :			game.addEnemy(data.enemy.id, data.enemy.color, data.enemy.x, data.enemy.y, data.enemy.velX, data.enemy.velY);
+			case Protocol.STC_REMOVEMULTISCORE :	if (data.enemyId > 0) game.removeEnemy(data.enemyId);
+													if (data.bulletId > 0) game.removeBullet(data.bulletId);
+													if (data.score > 0) game.addScore(data.playerId, data.score);
+			}
 	}
 
 	public function addPlayer(name : String)
@@ -48,8 +47,8 @@ class Network extends haxor.net.client.Network
 		Send({code : Protocol.CTS_ADDBULLET, playerId : playerId, x : x, y : y, velX : velX, velY : velY});
 	}
 	
-	public function removeEnemy(id : Int)
+	public function hitEnemy(enemyId : Int, bulletId : Int)
 	{
-		Send({code : Protocol.CTS_REMOVEENEMY, id : id});
+		Send({code : Protocol.CTS_HITENEMY, enemyId : enemyId, bulletId : bulletId});
 	}
 }

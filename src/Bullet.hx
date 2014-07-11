@@ -16,6 +16,7 @@ class Bullet extends Behaviour implements IUpdateable implements ITriggerable
 	public var game : Game;
 	public var playerId : Int;
 	public var color : Int;
+	public var own : Bool;
 	
 	public function new(entity : Entity)
 	{
