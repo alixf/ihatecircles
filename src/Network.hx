@@ -34,7 +34,7 @@ class Network extends haxor.net.client.Network
 
 	public function addPlayer(name : String, game : String)
 	{
-		Send( { code : Protocol.CTS_ADDPLAYER, name : String, game : String } );
+		Send( { code : Protocol.CTS_ADDPLAYER, name : name, game : game} );
 	}
 	
 	public function updatePosition(x : Float, y : Float, rotation : Float, velX : Float, velY : Float)
