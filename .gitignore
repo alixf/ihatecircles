@@ -2,3 +2,4 @@ bin/IHateCircle.js
 node_modules/
 server.js
 bin/IHateCircles.js
+bin/bower_components/

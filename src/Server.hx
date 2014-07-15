@@ -163,7 +163,7 @@ class Server extends TCPServer
 		{
 			switch(p_data.code)
 			{
-				case Protocol.CTS_ADDPLAYER :		addPlayer(p_user, Std.parseInt(p_user.id), p_data.name);
+				case Protocol.CTS_ADDPLAYER :		addPlayer(p_user, Std.parseInt(p_user.id), p_data.name, p_data.game);
 				case Protocol.CTS_UPDATEPLAYER :	updatePlayer(p_user, Std.parseInt(p_user.id), p_data.x, p_data.y, p_data.rotation, p_data.velX, p_data.velY);
 				case Protocol.CTS_ADDBULLET :		addBullet(p_user, Std.parseInt(p_user.id), p_data.playerId, p_data.x, p_data.y, p_data.velX, p_data.velY);
 				case Protocol.CTS_REMOVEBULLET :	removeBullet(p_user, Std.parseInt(p_user.id), p_data.id);
@@ -173,7 +173,7 @@ class Server extends TCPServer
 		}
 	}
 	
-	private function addPlayer(user : ServerUser, id : Int, name : String)
+	private function addPlayer(user : ServerUser, id : Int, name : String, game : String)
 	{
 		var player = new Player();
 		player.id = id;

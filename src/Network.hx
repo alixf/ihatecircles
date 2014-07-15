@@ -11,7 +11,7 @@ class Network extends haxor.net.client.Network
 	
 	override private function OnConnect():Void 
 	{
-		addPlayer("player#"+Std.random(10));
+		addPlayer(game.playerName, game.customGame ? "#"+game.customGameName : "lobby");
 	}
 
 	override private function OnData(p_data : String):Void
@@ -32,9 +32,9 @@ class Network extends haxor.net.client.Network
 			}
 	}
 
-	public function addPlayer(name : String)
+	public function addPlayer(name : String, game : String)
 	{
-		Send( { code : Protocol.CTS_ADDPLAYER, name : String } );
+		Send( { code : Protocol.CTS_ADDPLAYER, name : String, game : String } );
 	}
 	
 	public function updatePosition(x : Float, y : Float, rotation : Float, velX : Float, velY : Float)

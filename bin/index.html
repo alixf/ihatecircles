@@ -4,12 +4,19 @@
 		<meta charset="utf-8"/>
 		<title>IHateCircle</title>
 		<link href='http://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
 		<script src="http://cdn.peerjs.com/0.3/peer.js"></script>
+		<script src="bower_components/platform/platform.js"></script>
+		<link rel="import" href="bower_components/core-overlay/core-overlay.html">
+		<link rel="import" href="bower_components/paper-input/paper-input.html">
+		<link rel="import" href="bower_components/paper-checkbox/paper-checkbox.html">
+		<link rel="import" href="bower_components/paper-button/paper-button.html">
 		<style>
 			body
 			{
 				display : flex;
 				justify-content : center;
+				font-family: 'Source Sans Pro', sans-serif;
 			}
 			.container
 			{
@@ -40,9 +47,38 @@
 			{
 				box-shadow : 0px 0px 5px #000;
 			}
+			#overlay
+			{
+				padding : 10px;
+				background : white;
+				border : 1px solid white;
+				display : flex;
+				flex-direction : column;
+				align-items : center;
+			}
+			.field
+			{
+				display : flex;
+				flex-direction : row;
+				align-items : center;
+				margin-right : 10px;
+			}
+			paper-button
+			{
+				background-color: rgb(0, 127, 255);
+				color : white;
+			}
+			paper-checkbox
+			{
+				padding : 10px;
+			}
+			paper-button
+			{
+				width : 100%;
+			}
 		</style>
 	</head>
-	<body style="margin : 0px; background-color : #222;">		
+	<body unresolved style="margin : 0px; background-color : #222;">		
 		<div class="container">
 			<div id="ui" style="display : flex;">
 				<div class="player empty" id="p1">
@@ -63,6 +99,17 @@
 				</div>
 			</div>
 			<canvas width="800" height="600" id="canvas"></canvas>
+			
+			<core-overlay id="overlay" backdrop autoCloseDisabled opened>
+				<h1>Play "I Hate Circles" !</h1>
+				<paper-input label="Enter your name" floatingLabel id="playerName"></paper-input>
+				<div class="field">
+					<paper-checkbox id="customGame"></paper-checkbox>
+					<label for="matchmaking">I want to play a private game with my friends</label>
+				</div>
+				<paper-input id="customGameName" label="Enter the custom game name" floatingLabel style="visibility : hidden;"></paper-input>
+				<paper-button label="Play !" id="startGame"></paper-button>
+			</core-overlay>
 		</div>
 		<script src="IHateCircles.js" application="Game" ui="true"></script>
 	</body>

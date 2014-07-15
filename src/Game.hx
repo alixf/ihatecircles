@@ -8,6 +8,7 @@ import haxor.component.Transform;
 import js.html.CanvasElement;
 import js.html.CanvasRenderingContext2D;
 import js.Browser;
+import js.html.Event;
 import js.html.Image;
 import haxor.math.Quaternion;
 import physics.*;
@@ -29,6 +30,11 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 	var readyAreaImageRenderer : ImageRenderer;
 	var readyArea : Entity;
 	var gameStarted = false;
+	
+	
+	public var playerName : String;
+	public var customGame : Bool;
+	public var customGameName : String;
 	
 	public static function main()
 	{
@@ -52,6 +58,29 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 	}
 	
 	override function Initialize() : Void
+	{
+		var overlayElement = Browser.document.getElementById("overlay");
+		var customGameCheckbox = Browser.document.getElementById("customGame");
+		var customGameNameInput = Browser.document.getElementById("customGameName");
+		var startGameButton = Browser.document.getElementById("startGame");
+		var playerNameInput = Browser.document.getElementById("playerName");
+		
+		customGameCheckbox.addEventListener("change", function(event : Event)
+		{
+			var checked : Bool = untyped __js__("event.target.checked");
+			customGameNameInput.setAttribute("style", checked ? "visibility : visible;" : "visibility : hidden;");
+		});
+		startGameButton.addEventListener("click", function(event : Event)
+		{
+			playerName = untyped __js__("playerNameInput.value");
+			customGame = untyped __js__("customGameCheckbox.checked");
+			customGameName = untyped __js__("customGameNameInput.value");
+			overlayElement.setAttribute("opened", "false");
+			Start();
+		});
+	}
+	
+	function Start()
 	{
 		var networkEntity = new Entity();
 		network = cast networkEntity.AddComponent(Network);
