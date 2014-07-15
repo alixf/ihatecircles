@@ -11,6 +11,7 @@ import js.Browser;
 import js.html.Image;
 import haxor.math.Quaternion;
 import physics.*;
+import motion.Actuate;
 
 class Game extends Application implements IRenderable implements IFixedUpdateable
 {
@@ -20,9 +21,14 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 	public var playerImages : Array<Image>;
 	public var bulletImages : Array<Image>;
 	public var enemyImages : Array<Image>;
+	public var readyAreaImage : Image;
 	public var players = new Map<Int, Entity>();
 	public var bullets = new Map<Int, Entity>();
 	public var enemies = new Map<Int, Entity>();
+	var playersIn = 0.0;
+	var readyAreaImageRenderer : ImageRenderer;
+	var readyArea : Entity;
+	var gameStarted = false;
 	
 	public static function main()
 	{
@@ -42,6 +48,7 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 						Asset.LoadImage("enemyImage1", "assets/enemy1.png"),
 						Asset.LoadImage("enemyImage2", "assets/enemy2.png"),
 						Asset.LoadImage("enemyImage3", "assets/enemy3.png")];
+		readyAreaImage = Asset.LoadImage("readyArea", "assets/readyArea.png");
 	}
 	
 	override function Initialize() : Void
@@ -65,6 +72,13 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		var backgroundEntity = new Entity();
 		var background : Background = cast backgroundEntity.AddComponent(Background);
 		background.canvas = canvas;
+		
+		// Ready Area
+		readyArea = new Entity();
+		readyAreaImageRenderer = readyArea.AddComponent(ImageRenderer);
+		readyAreaImageRenderer.canvas = canvas;
+		readyAreaImageRenderer.image = readyAreaImage;
+		readyArea.transform.position = new Vector3(400, 600 - 107);
 	}
 	
 	public function addPlayer(id : Int, name : String, color : Int, x : Float, y : Float, rotation : Float, self : Bool)
@@ -188,7 +202,6 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 	
 	public function addScore(playerId : Int, score : Float)
 	{
-		trace("TEST : "+playerId);
 		var player = players.get(playerId).GetComponent(Player);
 		player.score += score;
 		UI.instance.setPlayerScore(playerId, player.score);
@@ -197,13 +210,40 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 	public function OnFixedUpdate() : Void
 	{
 		Physics.Update();
+		
+		if (!gameStarted)
+		{
+			playersIn = 0.0;
+			var playersCount = 0.0;
+			for (player in players)
+			{
+				playersCount += 1.0;
+				if (Vector3.Distance(player.transform.position, new Vector3(readyArea.transform.position.x, 600, 0)) <= 180)
+					playersIn += 1.0;
+			}
+			if(playersCount > 0)
+				playersIn = playersIn / playersCount;
+		}
 	}
 	
 	public function OnRender():Void
 	{
 		canvas.clearRect(0, 0, 800, 600);
-		//canvas.fillStyle="#DDDDDD";
-		//canvas.fillRect(0,0,800,600);
+		
+		if (!gameStarted)
+		{
+			switch(playersIn)
+			{
+			case 0.0 : readyAreaImageRenderer.opacity = 0.25;
+			case 1.0 :
+					readyAreaImageRenderer.opacity = 1.0;
+					network.startGame();
+					Actuate.update(function(x:Float,y:Float,z:Float){readyArea.transform.scale = new Vector3(x, y, z);}, 0.5, [1.0,1.0,1.0], [3.0,3.0,1.0]).ease(motion.easing.Expo.easeIn);
+					Actuate.tween(readyAreaImageRenderer, 0.5, {opacity : 0});
+					gameStarted = true;
+			case _ : readyAreaImageRenderer.opacity = 0.5 + (0.25 * Math.sin(Time.elapsed*5));
+			}
+		}
 		
 		//for (c in Physics.colliders)
 		//{			

@@ -51,19 +51,10 @@ class Server extends TCPServer
 	public var colors = [0x0367A6, 0x048ABF, 0x47A62D, 0xF2B84B];
 	
 	public var wave = 0;
-	public var enemyWaves =
-	[
-		{time : 0.100, 	data : { id : 1, color : 0, x : 100, y : 100, velX : 0, velY : 0, health : 5 }},
-		{time : 0.200, 	data : { id : 2, color : 0, x : 150, y : 100, velX : 0, velY : 0, health : 5 }},
-		{time : 0.300, 	data : { id : 3, color : 0, x : 200, y : 100, velX : 0, velY : 0, health : 5 }},
-		{time : 0.600, 	data : { id : 4, color : 0, x : 200, y : 150, velX : 0, velY : 0, health : 5 }},
-		{time : 0.700, 	data : { id : 5, color : 0, x : 200, y : 200, velX : 0, velY : 0, health : 5 }},
-		{time : 0.800, 	data : { id : 6, color : 0, x : 150, y : 200, velX : 0, velY : 0, health : 5 }},
-		{time : 1.000, 	data : { id : 7, color : 0, x : 100, y : 200, velX : 0, velY : 0, health : 5 }},
-		{time : 1.100, 	data : { id : 8, color : 0, x : 100, y : 150, velX : 0, velY : 0, health : 5 }},
-	];
+	public var enemyWaves : Array<Dynamic>;
 	public var timer : Timer;
 	public var startTime = 0.0;
+	public var gameStarted = false;
 	
 	static function main()
 	{
@@ -78,12 +69,42 @@ class Server extends TCPServer
 	
 	private function startGame()
 	{
+		if (gameStarted)
+			return;
+			
+		var id = 1;
+		enemyWaves =
+		[
+			{time : 0.100, 	data : { id : id++, color : 0, x : 100, y : 100, velX : 0, velY : 0, health : 5 }},
+			{time : 0.160, 	data : { id : id++, color : 0, x : 130, y : 100, velX : 0, velY : 0, health : 5 }},
+			{time : 0.300, 	data : { id : id++, color : 0, x : 160, y : 100, velX : 0, velY : 0, health : 5 }},
+			{time : 0.600, 	data : { id : id++, color : 0, x : 160, y : 130, velX : 0, velY : 0, health : 5 }},
+			{time : 0.700, 	data : { id : id++, color : 0, x : 160, y : 160, velX : 0, velY : 0, health : 5 }},
+			{time : 0.800, 	data : { id : id++, color : 0, x : 130, y : 160, velX : 0, velY : 0, health : 5 }},
+			{time : 1.000, 	data : { id : id++, color : 0, x : 100, y : 160, velX : 0, velY : 0, health : 5 }},
+			{time : 1.100, 	data : { id : id++, color : 0, x : 100, y : 130, velX : 0, velY : 0, health : 5 }},
+			
+			{time : 0.100, 	data : { id : id++, color : 1, x : 400+100, y : 100, velX : 0, velY : 0, health : 5 }},
+			{time : 0.160, 	data : { id : id++, color : 1, x : 400+130, y : 100, velX : 0, velY : 0, health : 5 }},
+			{time : 0.300, 	data : { id : id++, color : 1, x : 400+160, y : 100, velX : 0, velY : 0, health : 5 }},
+			{time : 0.600, 	data : { id : id++, color : 1, x : 400+160, y : 130, velX : 0, velY : 0, health : 5 }},
+			{time : 0.700, 	data : { id : id++, color : 1, x : 400+160, y : 160, velX : 0, velY : 0, health : 5 }},
+			{time : 0.800, 	data : { id : id++, color : 1, x : 400+130, y : 160, velX : 0, velY : 0, health : 5 }},
+			{time : 1.000, 	data : { id : id++, color : 1, x : 400+100, y : 160, velX : 0, velY : 0, health : 5 }},
+			{time : 1.100, 	data : { id : id++, color : 1, x : 400+100, y : 130, velX : 0, velY : 0, health : 5 }},
+			
+			
+			{time : 1.100, 	data : { id : id++, color : 1, x : 130, y : 130, velX : 0, velY : 0, health : 5 }},
+			{time : 1.100, 	data : { id : id++, color : 0, x : 400 + 130, y : 130, velX : 0, velY : 0, health : 5 }},
+		];
+		
 		startTime = Timer.stamp();
 		timer = new Timer(100);
 		timer.run = function()
 		{
 			addEnemy();
-		}
+		};
+		gameStarted = true;
 	}
 
 	private function addEnemy()
@@ -122,10 +143,10 @@ class Server extends TCPServer
 	
 	override function OnUserDisconnect(p_user : ServerUser) : Void 
 	{
-		super.OnUserDisconnect(p_user);
-		
 		trace("remove user : " + p_user);
 		trace("users count : " + users.length);
+		
+		super.OnUserDisconnect(p_user);
 		
 		players.remove(Std.parseInt(p_user.id));
 		
@@ -147,6 +168,7 @@ class Server extends TCPServer
 				case Protocol.CTS_ADDBULLET :		addBullet(p_user, Std.parseInt(p_user.id), p_data.playerId, p_data.x, p_data.y, p_data.velX, p_data.velY);
 				case Protocol.CTS_REMOVEBULLET :	removeBullet(p_user, Std.parseInt(p_user.id), p_data.id);
 				case Protocol.CTS_HITENEMY :		hitEnemy(p_user, Std.parseInt(p_user.id), p_data.enemyId, p_data.bulletId);
+				case Protocol.CTS_STARTGAME :		startGame();
 			}
 		}
 	}
@@ -161,9 +183,6 @@ class Server extends TCPServer
 		player.rotation = Math.random() * 2 * Math.PI;
 		player.color = id % colors.length;
 		players.set(id, player);
-		
-		if (startTime == 0.0)
-			startGame();
 		
 		for (otherUser in users)
 			otherUser.Send( { code : Protocol.STC_ADDPLAYER, player : player, self : user == otherUser});
@@ -218,7 +237,7 @@ class Server extends TCPServer
 			if (enemy.color == bulletColor)
 			{
 				enemy.health -= bullet.power;
-				
+		
 				if (enemy.health < 0)
 				{
 					for (otherUser in users)

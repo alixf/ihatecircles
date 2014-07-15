@@ -51,4 +51,9 @@ class Network extends haxor.net.client.Network
 	{
 		Send({code : Protocol.CTS_HITENEMY, enemyId : enemyId, bulletId : bulletId});
 	}
+	
+	public function startGame()
+	{
+		Send( { code : Protocol.CTS_STARTGAME } );
+	}
 }
