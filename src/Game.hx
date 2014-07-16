@@ -115,7 +115,13 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		var player = new Entity();
 		var imageRenderer = player.AddComponent(ImageRenderer);
 		imageRenderer.canvas = canvas;
-		imageRenderer.image = playerImages[color%4];
+		imageRenderer.image = playerImages[color % 4];
+		
+		var textRenderer = player.AddComponent(TextRenderer);
+		textRenderer.fixedRotation = true;
+		textRenderer.canvas = canvas;
+		textRenderer.set_text(name); //FIXME
+		
 		var rigidbody = player.AddComponent(RigidBody);
 		
 		var playerBehaviour = player.AddComponent(Player);
@@ -229,6 +235,13 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		}
 	}
 	
+	public function startGame()
+	{		
+		Actuate.update(function(x:Float,y:Float,z:Float){readyArea.transform.scale = new Vector3(x, y, z);}, 0.5, [1.0,1.0,1.0], [3.0,3.0,1.0]).ease(motion.easing.Expo.easeIn);
+		Actuate.tween(readyAreaImageRenderer, 0.5, {opacity : 0});
+		gameStarted = true;
+	}
+	
 	public function addScore(playerId : Int, score : Float)
 	{
 		var player = players.get(playerId).GetComponent(Player);
@@ -267,9 +280,6 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 			case 1.0 :
 					readyAreaImageRenderer.opacity = 1.0;
 					network.startGame();
-					Actuate.update(function(x:Float,y:Float,z:Float){readyArea.transform.scale = new Vector3(x, y, z);}, 0.5, [1.0,1.0,1.0], [3.0,3.0,1.0]).ease(motion.easing.Expo.easeIn);
-					Actuate.tween(readyAreaImageRenderer, 0.5, {opacity : 0});
-					gameStarted = true;
 			case _ : readyAreaImageRenderer.opacity = 0.5 + (0.25 * Math.sin(Time.elapsed*5));
 			}
 		}

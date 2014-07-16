@@ -104,7 +104,11 @@ class Server extends TCPServer
 		{
 			addEnemy();
 		};
+		
 		gameStarted = true;
+		
+		for (otherUser in users)
+			otherUser.Send( { code : Protocol.STC_STARTGAME });
 	}
 
 	private function addEnemy()

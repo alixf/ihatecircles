@@ -29,6 +29,7 @@ class Network extends haxor.net.client.Network
 			case Protocol.STC_REMOVEMULTISCORE :	if (data.enemyId > 0) game.removeEnemy(data.enemyId);
 													if (data.bulletId > 0) game.removeBullet(data.bulletId);
 													if (data.score > 0) game.addScore(data.playerId, data.score);
+			case Protocol.STC_STARTGAME :			game.startGame();
 			}
 	}
 

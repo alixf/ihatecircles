@@ -7,6 +7,7 @@
 	var STC_ADDENEMY			= 4;
 	var STC_UPDATEENEMY			= 5;
 	var STC_REMOVEMULTISCORE	= 6;
+	var STC_STARTGAME			= 7;
 	
 	var CTS_ADDPLAYER 			= 100;
 	var CTS_UPDATEPLAYER 		= 101;

@@ -27,6 +27,7 @@ class UI
 	{
 		var playerElement = Browser.document.getElementById("p" + (id+1));
 		playerElement.className = "player";
+		cast(playerElement.getElementsByClassName("name")[0],Element).innerHTML = name;
 	}
 	public function removePlayer(id : Int)
 	{

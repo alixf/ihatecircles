@@ -1,0 +1,25 @@
+{
+  "name": "IHateCircles",
+  "version": "0.1",
+  "homepage": "https://github.com/eolhing/ihatecircles",
+  "authors": [
+    "Alix Fumoleau <alix.fumoleau@gmail.com>"
+  ],
+  "main": "index.html",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "core-overlay": "Polymer/core-overlay#~0.3.4",
+    "paper-checkbox": "Polymer/paper-checkbox#~0.3.4",
+    "paper-input": "Polymer/paper-input#~0.3.4",
+    "paper-button": "Polymer/paper-button#~0.3.4",
+    "polymer": "~0.3.3"
+  }
+}
