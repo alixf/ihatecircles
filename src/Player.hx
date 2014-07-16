@@ -37,22 +37,28 @@ class Player extends Behaviour implements IUpdateable implements ITriggerable
 		if (control)
 		{
 			reloadClock += Time.deltaTime;
-			
-			transform.rotation = Quaternion.FromAxisAngle(new Vector3(1, 0, 0), Math.atan2(Input.mouse.y - transform.position.y - game.canvasElement.getBoundingClientRect().top, Input.mouse.x - transform.position.x - game.canvasElement.getBoundingClientRect().left));
-
+				
+			if (health > 0)
+			{
+				transform.rotation = Quaternion.FromAxisAngle(new Vector3(1, 0, 0), Math.atan2(Input.mouse.y - transform.position.y - game.canvasElement.getBoundingClientRect().top, Input.mouse.x - transform.position.x - game.canvasElement.getBoundingClientRect().left));
+			}
+				
 			var vx = rigidbody.velocity.x;
 			var vy = rigidbody.velocity.y;
-			if (Input.IsDown(KeyCode.Q)) { vx += -1 * Time.deltaTime * speed; }		
-			if (Input.IsDown(KeyCode.D)) { vx +=  1 * Time.deltaTime * speed; }
-			if (Input.IsDown(KeyCode.Z)) { vy += -1 * Time.deltaTime * speed; }
-			if (Input.IsDown(KeyCode.S)) { vy +=  1 * Time.deltaTime * speed; }
+				
+			if (health > 0)
+			{
+				if (Input.IsDown(KeyCode.Q)) { vx += -1 * Time.deltaTime * speed; }		
+				if (Input.IsDown(KeyCode.D)) { vx +=  1 * Time.deltaTime * speed; }
+				if (Input.IsDown(KeyCode.Z)) { vy += -1 * Time.deltaTime * speed; }
+				if (Input.IsDown(KeyCode.S)) { vy +=  1 * Time.deltaTime * speed; }
+			}
 			vx = Mathf.Lerp(vx, 0.0, Time.deltaTime * 3.0);
 			vy = Mathf.Lerp(vy, 0.0, Time.deltaTime * 3.0);
 			rigidbody.velocity = new Vector3(vx, vy, 0);
-			
 			Network.instance.updatePosition(transform.position.x, transform.position.y, transform.rotation.euler.z, rigidbody.velocity.x, rigidbody.velocity.y);
 
-			if (Input.IsDown(KeyCode.Mouse0) && reloadClock > 0.125)
+			if (Input.IsDown(KeyCode.Mouse0) && reloadClock > 0.125 && health > 0)
 			{
 				reloadClock = 0.0;
 				Network.instance.addBullet(myId, transform.position.x, transform.position.y, Math.cos(transform.rotation.euler.z) * 1000, Math.sin(transform.rotation.euler.z) * 1000);
@@ -78,12 +84,12 @@ class Player extends Behaviour implements IUpdateable implements ITriggerable
 		var enemy : Enemy = c.GetComponent(Enemy);
 		if (enemy != null)
 		{
-			//Network.instance.hitPlayer(myId, enemy.myId);
 			rigidbody.AddForce(transform.position.Sub(enemy.transform.position).normalized.Scale(500 / Time.deltaTime), ForceMode.Velocity);
 			
 			if (!invincible)
 			{
-				invincible = true;				
+				invincible = true;
+				Network.instance.hitPlayer(enemy.myId);
 				var ir = GetComponent(ImageRenderer);
 				if(ir != null)
 					Actuate.tween(ir, 1.0, { opacity : 0.33 } ).onComplete(function() { invincible = false; Actuate.apply(ir, { opacity : 1 } ); } );

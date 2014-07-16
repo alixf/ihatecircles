@@ -30,6 +30,7 @@ class Network extends haxor.net.client.Network
 													if (data.bulletId > 0) game.removeBullet(data.bulletId);
 													if (data.score > 0) game.addScore(data.playerId, data.score);
 			case Protocol.STC_STARTGAME :			game.startGame();
+			case Protocol.STC_HITPLAYER : 			game.updateLife(data.playerId, data.health);
 			}
 	}
 
@@ -56,5 +57,10 @@ class Network extends haxor.net.client.Network
 	public function startGame()
 	{
 		Send( { code : Protocol.CTS_STARTGAME } );
+	}
+	
+	public function hitPlayer(enemyId : Int)
+	{
+		Send( { code : Protocol.CTS_HITPLAYER, enemyId : enemyId } );
 	}
 }

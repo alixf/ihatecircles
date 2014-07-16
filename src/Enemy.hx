@@ -15,9 +15,9 @@ import motion.Actuate;
 
 class Enemy extends Behaviour implements IUpdateable implements ITriggerable
 {
-	var myId : Int;
+	public var myId : Int;
 	var game : Game;
-	var color : Int;
+	public var color : Int;
 	
 	public function new(entity : Entity)
 	{

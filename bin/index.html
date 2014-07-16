@@ -76,6 +76,21 @@
 			{
 				width : 100%;
 			}
+			.health
+			{
+				display : flex;
+			}
+			.hp
+			{
+				padding : 10px;
+				margin : 5px;
+				background-color : rgba(255,255,255,0.33);
+				flex : 1 1 33%;
+			}
+			.hp.down
+			{
+				background-color : rgba(0,0,0,0.33);
+			}
 		</style>
 	</head>
 	<body unresolved style="margin : 0px; background-color : #222;">		
@@ -83,18 +98,38 @@
 			<div id="ui" style="display : flex;">
 				<div class="player empty" id="p1">
 					<div class="name">Empty Slot</div>
+					<div class="health">
+						<div class="hp"></div>
+						<div class="hp"></div>
+						<div class="hp"></div>
+					</div>
 					<div class="score">0</div>
 				</div>
 				<div class="player empty" id="p2">
 					<div class="name">Empty Slot</div>
+					<div class="health">
+						<div class="hp"></div>
+						<div class="hp"></div>
+						<div class="hp"></div>
+					</div>
 					<div class="score">0</div>
 				</div>
 				<div class="player empty" id="p3">
 					<div class="name">Empty Slot</div>
+					<div class="health">
+						<div class="hp"></div>
+						<div class="hp"></div>
+						<div class="hp"></div>
+					</div>
 					<div class="score">0</div>
 				</div>
 				<div class="player empty" id="p4">
 					<div class="name">Empty Slot</div>
+					<div class="health">
+						<div class="hp"></div>
+						<div class="hp"></div>
+						<div class="hp"></div>
+					</div>
 					<div class="score">0</div>
 				</div>
 			</div>

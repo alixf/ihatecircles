@@ -126,8 +126,11 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		
 		var rigidbody = player.AddComponent(RigidBody);
 		
-		var collider = player.AddComponent(Collider);
-		collider.radius = 15.0;
+		if (self)
+		{
+			var collider = player.AddComponent(Collider);
+			collider.radius = 15.0;	
+		}
 		
 		var playerBehaviour = player.AddComponent(Player);
 		playerBehaviour.game = this;
@@ -295,5 +298,13 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 			//canvas.fillStyle = 'rgba(255,255,255,0.1)';
 			//canvas.fill();
 		//}
+	}
+	
+	public function updateLife(playerId : Int, health : Int)
+	{
+		players.get(playerId).GetComponent(Player).health = health;
+		if (health <= 0)
+			Actuate.apply(players.get(playerId).GetComponent(ImageRenderer), { opacity : 0.33 } ); // FIXME
+		UI.instance.setPlayerHealth(playerId, health);
 	}
 }

@@ -214,6 +214,7 @@ class Server extends TCPServer
 				case Protocol.CTS_REMOVEBULLET :	removeBullet(p_user, Std.parseInt(p_user.id), p_data.id);
 				case Protocol.CTS_HITENEMY :		hitEnemy(p_user, Std.parseInt(p_user.id), p_data.enemyId, p_data.bulletId);
 				case Protocol.CTS_STARTGAME :		startGame();
+				case Protocol.CTS_HITPLAYER :		hitPlayer(p_user, Std.parseInt(p_user.id), p_data.enemyId);
 			}
 		}
 	}
@@ -227,6 +228,7 @@ class Server extends TCPServer
 		player.y = 100 + Math.random() * 400;
 		player.rotation = Math.random() * 2 * Math.PI;
 		player.color = id % colors.length;
+		player.health = 3;
 		players.set(id, player);
 		
 		for (otherUser in users)
@@ -242,9 +244,16 @@ class Server extends TCPServer
 		player.velY = velY;
 		player.rotation = rotation;
 		
+		try
+		{
 		for (otherUser in users)
 			if (user != otherUser)
-				otherUser.Send( { code : Protocol.STC_UPDATEPLAYER, id : player.id, x : player.x, y : player.y, rotation : player.rotation, velX : player.velX, velY : player.velY} );
+				otherUser.Send( { code : Protocol.STC_UPDATEPLAYER, id : player.id, x : player.x, y : player.y, rotation : player.rotation, velX : player.velX, velY : player.velY } );	
+		}
+		catch (e : Dynamic)
+		{
+			trace('Exception : $e');
+		}
 	}
 	
 	private function addBullet(user : ServerUser, id : Int, playerId : Int, x : Float, y : Float, velX : Float, velY : Float)
@@ -300,5 +309,14 @@ class Server extends TCPServer
 					otherUser.Send( { code : Protocol.STC_REMOVEMULTISCORE, bulletId : bulletId, enemyId : 0, score : 0, playerId : userId } );
 			}
 		}
+	}
+
+	private function hitPlayer(user : ServerUser, userId : Int, enemyId : Int)
+	{
+		var player = players.get(userId);
+		player.health--;
+		
+		for (otherUser in users)
+			otherUser.Send( { code : Protocol.STC_HITPLAYER, playerId : userId, health : player.health } );
 	}
 }

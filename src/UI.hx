@@ -41,4 +41,13 @@ class UI
 		var playerElement = Browser.document.getElementById("p" + (id+1));
 		cast(playerElement.getElementsByClassName("score")[0], Element).innerHTML = ""+Std.int(score);
 	}
+	
+	public function setPlayerHealth(id : Int, health : Int)
+	{
+		var playerElement = Browser.document.getElementById("p" + (id+1));
+		var hps = playerElement.getElementsByClassName("hp");
+		var i = 0;
+		for (hp in hps)
+			cast(hp, Element).className = i++ < health ? "hp" : "hp down";
+	}
 }
