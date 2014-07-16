@@ -11,6 +11,8 @@ class ImageRenderer extends Component implements IRenderable
 	public var image : Image;
 	public var canvas : CanvasRenderingContext2D;
 	public var opacity = 1.0;
+	public var x = 0.0;
+	public var y = 0.0;
 	
 	public function new(entity : Entity)
 	{
@@ -26,7 +28,7 @@ class ImageRenderer extends Component implements IRenderable
 			canvas.globalAlpha = opacity;
 			canvas.translate(transform.position.x, transform.position.y);
 			canvas.rotate(transform.rotation.euler.z);
-			canvas.drawImage(image, -image.naturalWidth / 2 * transform.scale.x, -image.naturalHeight / 2 * transform.scale.y, transform.scale.x * image.naturalWidth, transform.scale.y * image.naturalHeight);
+			canvas.drawImage(image, (x - image.naturalWidth / 2) * transform.scale.x, (y - image.naturalHeight / 2) * transform.scale.y, transform.scale.x * image.naturalWidth, transform.scale.y * image.naturalHeight);
 			canvas.restore();
 		}
 	}

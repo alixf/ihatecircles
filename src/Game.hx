@@ -116,6 +116,8 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		var imageRenderer = player.AddComponent(ImageRenderer);
 		imageRenderer.canvas = canvas;
 		imageRenderer.image = playerImages[color % 4];
+		imageRenderer.x = 10;
+		imageRenderer.y = 0;
 		
 		var textRenderer = player.AddComponent(TextRenderer);
 		textRenderer.fixedRotation = true;
@@ -123,6 +125,9 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		textRenderer.set_text(name); //FIXME
 		
 		var rigidbody = player.AddComponent(RigidBody);
+		
+		var collider = player.AddComponent(Collider);
+		collider.radius = 15.0;
 		
 		var playerBehaviour = player.AddComponent(Player);
 		playerBehaviour.game = this;
