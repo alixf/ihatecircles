@@ -93,9 +93,42 @@ class Server extends TCPServer
 			{time : 1.000, 	data : { id : id++, color : 1, x : 400+100, y : 160, velX : 0, velY : 0, health : 5 }},
 			{time : 1.100, 	data : { id : id++, color : 1, x : 400+100, y : 130, velX : 0, velY : 0, health : 5 }},
 			
-			
 			{time : 1.100, 	data : { id : id++, color : 1, x : 130, y : 130, velX : 0, velY : 0, health : 5 }},
 			{time : 1.100, 	data : { id : id++, color : 0, x : 400 + 130, y : 130, velX : 0, velY : 0, health : 5 }},
+			
+			
+			{time : 2.000, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 0) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 0) * 250, velX : 0, velY : 0, health : 5 }},
+			{time : 2.200, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 1) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 1) * 250, velX : 0, velY : 0, health : 5 }},
+			{time : 2.400, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 2) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 2) * 250, velX : 0, velY : 0, health : 5 }},
+			{time : 2.600, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 3) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 3) * 250, velX : 0, velY : 0, health : 5 }},
+			{time : 2.800, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 4) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 4) * 250, velX : 0, velY : 0, health : 5 }},
+			{time : 3.000, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 5) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 5) * 250, velX : 0, velY : 0, health : 5 }},
+			{time : 3.200, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 6) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 6) * 250, velX : 0, velY : 0, health : 5 }},
+			{time : 3.400, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 7) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 7) * 250, velX : 0, velY : 0, health : 5 }},
+			{time : 3.600, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 8) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 8) * 250, velX : 0, velY : 0, health : 5 }},
+			{time : 3.800, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 9) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 9) * 250, velX : 0, velY : 0, health : 5 }},
+			
+			{time : 4.000, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 0) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 0) * 200, velX : 0, velY : 0, health : 5 }},
+			{time : 4.200, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 1) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 1) * 200, velX : 0, velY : 0, health : 5 }},
+			{time : 4.400, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 2) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 2) * 200, velX : 0, velY : 0, health : 5 }},
+			{time : 4.600, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 3) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 3) * 200, velX : 0, velY : 0, health : 5 }},
+			{time : 4.800, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 4) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 4) * 200, velX : 0, velY : 0, health : 5 }},
+			{time : 5.000, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 5) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 5) * 200, velX : 0, velY : 0, health : 5 }},
+			{time : 5.200, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 6) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 6) * 200, velX : 0, velY : 0, health : 5 }},
+			{time : 5.400, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 7) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 7) * 200, velX : 0, velY : 0, health : 5 }},
+			{time : 5.600, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 8) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 8) * 200, velX : 0, velY : 0, health : 5 }},
+			{time : 5.800, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 9) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 9) * 200, velX : 0, velY : 0, health : 5 }},
+			
+			{time : 6.000, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 0) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 0) * 150, velX : 0, velY : 0, health : 5 }},
+			{time : 6.200, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 1) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 1) * 150, velX : 0, velY : 0, health : 5 }},
+			{time : 6.400, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 2) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 2) * 150, velX : 0, velY : 0, health : 5 }},
+			{time : 6.600, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 3) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 3) * 150, velX : 0, velY : 0, health : 5 }},
+			{time : 6.800, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 4) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 4) * 150, velX : 0, velY : 0, health : 5 }},
+			{time : 7.000, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 5) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 5) * 150, velX : 0, velY : 0, health : 5 }},
+			{time : 7.200, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 6) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 6) * 150, velX : 0, velY : 0, health : 5 }},
+			{time : 7.400, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 7) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 7) * 150, velX : 0, velY : 0, health : 5 }},
+			{time : 7.600, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 8) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 8) * 150, velX : 0, velY : 0, health : 5 }},
+			{time : 7.800, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 9) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 9) * 150, velX : 0, velY : 0, health : 5 }},
 		];
 		
 		startTime = Timer.stamp();

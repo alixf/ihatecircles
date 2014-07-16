@@ -11,6 +11,7 @@ import haxor.input.*;
 import haxor.core.Time;
 import haxor.math.Mathf;
 import physics.*;
+import motion.Actuate;
 
 class Enemy extends Behaviour implements IUpdateable implements ITriggerable
 {
@@ -22,6 +23,9 @@ class Enemy extends Behaviour implements IUpdateable implements ITriggerable
 	{
 		super(entity);
 		Engine.Add(this);
+		
+		transform.scale = Vector3.zero;
+		Actuate.update(function(x:Float, y:Float, z:Float) { transform.scale = new Vector3(x, y, z); }, 0.5, [0.0, 0.0, 0.0], [0.25, 0.25, 0.25]);
 	}
 	
 	public function OnUpdate():Void

@@ -9,6 +9,7 @@ import haxor.core.IUpdateable;
 import haxor.input.*;
 import haxor.core.Time;
 import haxor.math.Mathf;
+import motion.Actuate;
 
 class Player extends Behaviour implements IUpdateable
 {
@@ -23,6 +24,9 @@ class Player extends Behaviour implements IUpdateable
 	{
 		super(entity);
 		Engine.Add(this);
+		
+		transform.scale = Vector3.zero;
+		Actuate.update(function(x:Float, y:Float, z:Float) { transform.scale = new Vector3(x, y, z); }, 1.0, [0.0, 0.0, 0.0], [1.0, 1.0, 1.0]);
 	}
 
 	public function OnUpdate():Void

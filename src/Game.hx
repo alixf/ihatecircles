@@ -204,7 +204,6 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 	{
 		var enemy = new Entity();
 		enemy.transform.position = new Vector3(x, y, 0.0);
-		enemy.transform.scale = new Vector3(0.25, 0.25, 1);
 		
 		var imageRenderer = enemy.AddComponent(ImageRenderer);
 		imageRenderer.canvas = canvas;
@@ -236,7 +235,7 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 	}
 	
 	public function startGame()
-	{		
+	{
 		Actuate.update(function(x:Float,y:Float,z:Float){readyArea.transform.scale = new Vector3(x, y, z);}, 0.5, [1.0,1.0,1.0], [3.0,3.0,1.0]).ease(motion.easing.Expo.easeIn);
 		Actuate.tween(readyAreaImageRenderer, 0.5, {opacity : 0});
 		gameStarted = true;
