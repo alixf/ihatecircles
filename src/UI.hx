@@ -25,26 +25,26 @@ class UI
 	
 	public function addPlayer(id : Int, name : String)
 	{
-		var playerElement = Browser.document.getElementById("p" + (id+1));
+		var playerElement = Browser.document.getElementById("p" + (id));
 		playerElement.className = "player";
 		cast(playerElement.getElementsByClassName("name")[0],Element).innerHTML = name;
 	}
 	public function removePlayer(id : Int)
 	{
-		var playerElement = Browser.document.getElementById("p" + (id+1));
+		var playerElement = Browser.document.getElementById("p" + (id));
 		playerElement.className = "player empty";
 		cast(playerElement.getElementsByClassName("score")[0], Element).innerHTML = "0";
 		cast(playerElement.getElementsByClassName("name")[0], Element).innerHTML = "Empty Slot";
 	}
 	public function setPlayerScore(id : Int, score : Float)
 	{
-		var playerElement = Browser.document.getElementById("p" + (id+1));
+		var playerElement = Browser.document.getElementById("p" + (id));
 		cast(playerElement.getElementsByClassName("score")[0], Element).innerHTML = ""+Std.int(score);
 	}
 	
 	public function setPlayerHealth(id : Int, health : Int)
 	{
-		var playerElement = Browser.document.getElementById("p" + (id+1));
+		var playerElement = Browser.document.getElementById("p" + (id));
 		var hps = playerElement.getElementsByClassName("hp");
 		var i = 0;
 		for (hp in hps)

@@ -45,15 +45,18 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		playerImages = [Asset.LoadImage("playerImage0", "assets/player0.png"),
 						Asset.LoadImage("playerImage1", "assets/player1.png"),
 						Asset.LoadImage("playerImage2", "assets/player2.png"),
-						Asset.LoadImage("playerImage3", "assets/player3.png")];
+						Asset.LoadImage("playerImage3", "assets/player3.png"),
+						Asset.LoadImage("playerImage3", "assets/player4.png")];
 		bulletImages = [Asset.LoadImage("bulletImage0", "assets/bullet0.png"),
 						Asset.LoadImage("bulletImage1", "assets/bullet1.png"),
 						Asset.LoadImage("bulletImage2", "assets/bullet2.png"),
-						Asset.LoadImage("bulletImage3", "assets/bullet3.png")];
+						Asset.LoadImage("bulletImage3", "assets/bullet3.png"),
+						Asset.LoadImage("bulletImage3", "assets/bullet4.png")];
 		enemyImages =  [Asset.LoadImage("enemyImage0", "assets/enemy0.png"),
 						Asset.LoadImage("enemyImage1", "assets/enemy1.png"),
 						Asset.LoadImage("enemyImage2", "assets/enemy2.png"),
-						Asset.LoadImage("enemyImage3", "assets/enemy3.png")];
+						Asset.LoadImage("enemyImage3", "assets/enemy3.png"),
+						Asset.LoadImage("enemyImage4", "assets/enemy4.png")];
 		readyAreaImage = Asset.LoadImage("readyArea", "assets/readyArea.png");
 	}
 	
@@ -115,7 +118,7 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		var player = new Entity();
 		var imageRenderer = player.AddComponent(ImageRenderer);
 		imageRenderer.canvas = canvas;
-		imageRenderer.image = playerImages[color % 4];
+		imageRenderer.image = playerImages[color];
 		imageRenderer.x = 10;
 		imageRenderer.y = 0;
 		
@@ -125,6 +128,8 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		textRenderer.set_text(name); //FIXME
 		
 		var rigidbody = player.AddComponent(RigidBody);
+	
+		trace("Player : "+color);
 		
 		if (self)
 		{
@@ -136,7 +141,7 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		playerBehaviour.game = this;
 		playerBehaviour.myId = id;
 		playerBehaviour.control = self;
-		playerBehaviour.color = color % 4;
+		playerBehaviour.color = color;
 		
 		player.transform.position = new Vector3(x, y, 0.0);
 		player.transform.rotation = Quaternion.FromAxisAngle(new Vector3(1, 0, 0), rotation);
@@ -215,7 +220,9 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		
 		var imageRenderer = enemy.AddComponent(ImageRenderer);
 		imageRenderer.canvas = canvas;
-		imageRenderer.image = enemyImages[color];
+		imageRenderer.image = enemyImages[color%enemyImages.length];
+		
+		trace("ENEMY : " + color);
 		
 		enemy.AddComponent(RigidBody);
 		enemy.rigidbody.velocity = new Vector3(velX, velY, 0.0);

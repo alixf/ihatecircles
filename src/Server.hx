@@ -3,6 +3,8 @@ import haxe.Serializer;
 import haxe.Timer;
 import haxor.net.server.TCPServer;
 import haxor.net.server.ServerUser;
+import data.Data;
+import nodejs.fs.File;
 
 class Player
 {
@@ -51,7 +53,6 @@ class Server extends TCPServer
 	public var colors = [0x0367A6, 0x048ABF, 0x47A62D, 0xF2B84B];
 	
 	public var wave = 0;
-	public var enemyWaves : Array<Dynamic>;
 	public var timer : Timer;
 	public var startTime = 0.0;
 	public var gameStarted = false;
@@ -59,6 +60,12 @@ class Server extends TCPServer
 	static function main()
 	{
 		var server = new Server(2014, false);
+		
+		#if js
+		Data.load(File.readFileSync("data.cdb"));
+		#else
+		Data.load(haxe.Resource.getString("data.cdb"));
+		#end
 	}
 	
 	override function new(port : Int, debug : Bool)
@@ -72,73 +79,6 @@ class Server extends TCPServer
 		if (gameStarted)
 			return;
 			
-		var id = 1;
-		enemyWaves =
-		[
-			{time : 0.100, 	data : { id : id++, color : 0, x : 100, y : 100, velX : 0, velY : 0, health : 5 }},
-			{time : 0.160, 	data : { id : id++, color : 0, x : 130, y : 100, velX : 0, velY : 0, health : 5 }},
-			{time : 0.300, 	data : { id : id++, color : 0, x : 160, y : 100, velX : 0, velY : 0, health : 5 }},
-			{time : 0.600, 	data : { id : id++, color : 0, x : 160, y : 130, velX : 0, velY : 0, health : 5 }},
-			{time : 0.700, 	data : { id : id++, color : 0, x : 160, y : 160, velX : 0, velY : 0, health : 5 }},
-			{time : 0.800, 	data : { id : id++, color : 0, x : 130, y : 160, velX : 0, velY : 0, health : 5 }},
-			{time : 1.000, 	data : { id : id++, color : 0, x : 100, y : 160, velX : 0, velY : 0, health : 5 }},
-			{time : 1.100, 	data : { id : id++, color : 0, x : 100, y : 130, velX : 0, velY : 0, health : 5 }},
-			{time : 0.100, 	data : { id : id++, color : 1, x : 400+100, y : 100, velX : 0, velY : 0, health : 5 }},
-			{time : 0.160, 	data : { id : id++, color : 1, x : 400+130, y : 100, velX : 0, velY : 0, health : 5 }},
-			{time : 0.300, 	data : { id : id++, color : 1, x : 400+160, y : 100, velX : 0, velY : 0, health : 5 }},
-			{time : 0.600, 	data : { id : id++, color : 1, x : 400+160, y : 130, velX : 0, velY : 0, health : 5 }},
-			{time : 0.700, 	data : { id : id++, color : 1, x : 400+160, y : 160, velX : 0, velY : 0, health : 5 }},
-			{time : 0.800, 	data : { id : id++, color : 1, x : 400+130, y : 160, velX : 0, velY : 0, health : 5 }},
-			{time : 1.000, 	data : { id : id++, color : 1, x : 400+100, y : 160, velX : 0, velY : 0, health : 5 }},
-			{time : 1.100, 	data : { id : id++, color : 1, x : 400+100, y : 130, velX : 0, velY : 0, health : 5 }},
-			{time : 1.100, 	data : { id : id++, color : 1, x : 130, y : 130, velX : 0, velY : 0, health : 5 }},
-			{time : 1.100, 	data : { id : id++, color : 0, x : 400 + 130, y : 130, velX : 0, velY : 0, health : 5 }},
-			
-			{time : 2.000, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 0) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 0) * 250, velX : 0, velY : 0, health : 5 }},
-			{time : 2.200, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 1) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 1) * 250, velX : 0, velY : 0, health : 5 }},
-			{time : 2.400, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 2) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 2) * 250, velX : 0, velY : 0, health : 5 }},
-			{time : 2.600, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 3) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 3) * 250, velX : 0, velY : 0, health : 5 }},
-			{time : 2.800, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 4) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 4) * 250, velX : 0, velY : 0, health : 5 }},
-			{time : 3.000, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 5) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 5) * 250, velX : 0, velY : 0, health : 5 }},
-			{time : 3.200, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 6) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 6) * 250, velX : 0, velY : 0, health : 5 }},
-			{time : 3.400, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 7) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 7) * 250, velX : 0, velY : 0, health : 5 }},
-			{time : 3.600, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 8) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 8) * 250, velX : 0, velY : 0, health : 5 }},
-			{time : 3.800, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 9) * 250, y : 300 + Math.sin(Math.PI * 2 / 10 * 9) * 250, velX : 0, velY : 0, health : 5 }},
-			
-			{time : 4.000, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 0) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 0) * 200, velX : 0, velY : 0, health : 5 }},
-			{time : 4.200, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 1) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 1) * 200, velX : 0, velY : 0, health : 5 }},
-			{time : 4.400, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 2) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 2) * 200, velX : 0, velY : 0, health : 5 }},
-			{time : 4.600, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 3) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 3) * 200, velX : 0, velY : 0, health : 5 }},
-			{time : 4.800, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 4) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 4) * 200, velX : 0, velY : 0, health : 5 }},
-			{time : 5.000, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 5) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 5) * 200, velX : 0, velY : 0, health : 5 }},
-			{time : 5.200, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 6) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 6) * 200, velX : 0, velY : 0, health : 5 }},
-			{time : 5.400, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 7) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 7) * 200, velX : 0, velY : 0, health : 5 }},
-			{time : 5.600, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 8) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 8) * 200, velX : 0, velY : 0, health : 5 }},
-			{time : 5.800, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 9) * 200, y : 300 + Math.sin(Math.PI * 2 / 10 * 9) * 200, velX : 0, velY : 0, health : 5 }},
-			
-			{time : 6.000, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 0) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 0) * 150, velX : 0, velY : 0, health : 5 }},
-			{time : 6.200, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 1) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 1) * 150, velX : 0, velY : 0, health : 5 }},
-			{time : 6.400, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 2) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 2) * 150, velX : 0, velY : 0, health : 5 }},
-			{time : 6.600, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 3) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 3) * 150, velX : 0, velY : 0, health : 5 }},
-			{time : 6.800, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 4) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 4) * 150, velX : 0, velY : 0, health : 5 }},
-			{time : 7.000, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 5) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 5) * 150, velX : 0, velY : 0, health : 5 }},
-			{time : 7.200, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 6) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 6) * 150, velX : 0, velY : 0, health : 5 }},
-			{time : 7.400, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 7) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 7) * 150, velX : 0, velY : 0, health : 5 }},
-			{time : 7.600, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 8) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 8) * 150, velX : 0, velY : 0, health : 5 }},
-			{time : 7.800, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 9) * 150, y : 300 + Math.sin(Math.PI * 2 / 10 * 9) * 150, velX : 0, velY : 0, health : 5 }},
-			
-			{time : 8.000, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 0) * 100, y : 300 + Math.sin(Math.PI * 2 / 10 * 0) * 100, velX : 0, velY : 0, health : 5 }},
-			{time : 8.200, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 1) * 100, y : 300 + Math.sin(Math.PI * 2 / 10 * 1) * 100, velX : 0, velY : 0, health : 5 }},
-			{time : 8.400, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 2) * 100, y : 300 + Math.sin(Math.PI * 2 / 10 * 2) * 100, velX : 0, velY : 0, health : 5 }},
-			{time : 8.600, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 3) * 100, y : 300 + Math.sin(Math.PI * 2 / 10 * 3) * 100, velX : 0, velY : 0, health : 5 }},
-			{time : 8.800, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 4) * 100, y : 300 + Math.sin(Math.PI * 2 / 10 * 4) * 100, velX : 0, velY : 0, health : 5 }},
-			{time : 9.000, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 5) * 100, y : 300 + Math.sin(Math.PI * 2 / 10 * 5) * 100, velX : 0, velY : 0, health : 5 }},
-			{time : 9.200, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 6) * 100, y : 300 + Math.sin(Math.PI * 2 / 10 * 6) * 100, velX : 0, velY : 0, health : 5 }},
-			{time : 9.400, 	data : { id : id++, color : 0, x : 400 + Math.cos(Math.PI * 2 / 10 * 7) * 100, y : 300 + Math.sin(Math.PI * 2 / 10 * 7) * 100, velX : 0, velY : 0, health : 5 }},
-			{time : 9.600, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 8) * 100, y : 300 + Math.sin(Math.PI * 2 / 10 * 8) * 100, velX : 0, velY : 0, health : 5 }},
-			{time : 9.800, 	data : { id : id++, color : 1, x : 400 + Math.cos(Math.PI * 2 / 10 * 9) * 100, y : 300 + Math.sin(Math.PI * 2 / 10 * 9) * 100, velX : 0, velY : 0, health : 5 }},
-		];
-		
 		startTime = Timer.stamp();
 		timer = new Timer(100);
 		timer.run = function()
@@ -155,27 +95,62 @@ class Server extends TCPServer
 	private function addEnemy()
 	{
 		var time = Timer.stamp() - startTime;
-		var nextEnemy = enemyWaves[wave];
+		var nextEnemy = Data.Enemies.all[wave];
 		
 		if (nextEnemy != null)
 		{
 			if (nextEnemy.time <= time)
 			{
 				wave++;
+				
 				var enemy = new Enemy();
-				enemy.id = nextEnemy.data.id;
-				enemy.color = nextEnemy.data.color;
-				enemy.x = nextEnemy.data.x;
-				enemy.y = nextEnemy.data.y;
-				enemy.velX = nextEnemy.data.velX;
-				enemy.velY = nextEnemy.data.velY;
-				enemy.health = nextEnemy.data.health;
+				enemy.id = nextEnemy.index;
+				
+				switch(nextEnemy.position)
+				{
+				case data.Position.Fixed(x, y) : enemy.x = x; enemy.y = y;
+				case data.Position.Random(x0, y0, x1, y1) :	enemy.x = x0 + Math.random() * (x1 - x0);
+															enemy.y = y0 + Math.random() * (y1 - y0);
+				case data.Position.Circle(x, y, angle, radius) : 	enemy.x = x + Math.cos(Math.PI * 2 * angle) * radius;
+																	enemy.y = y + Math.sin(Math.PI * 2 * angle) * radius;
+				}
+				
+				for (color in nextEnemy.color)
+					enemy.color = color.colors.toInt();
+				
+				enemy.velX = 0;
+				enemy.velY = 0;
+				enemy.health = nextEnemy.health;
 				enemies.set(enemy.id, enemy);
 				
 				for (otherUser in users)
 					otherUser.Send( { code : Protocol.STC_ADDENEMY, enemy : enemy} );
 			}
 		}
+		
+		
+		
+		
+		
+		//if (nextEnemy != null)
+		//{
+			//if (nextEnemy.time <= time)
+			//{
+				//wave++;
+				//var enemy = new Enemy();
+				//enemy.id = nextEnemy.data.id;
+				//enemy.color = nextEnemy.data.color;
+				//enemy.x = nextEnemy.data.x;
+				//enemy.y = nextEnemy.data.y;
+				//enemy.velX = nextEnemy.data.velX;
+				//enemy.velY = nextEnemy.data.velY;
+				//enemy.health = nextEnemy.data.health;
+				//enemies.set(enemy.id, enemy);
+				//
+				//for (otherUser in users)
+					//otherUser.Send( { code : Protocol.STC_ADDENEMY, enemy : enemy} );
+			//}
+		//}
 	}
 	
 	override function OnUserConnect(p_user : ServerUser) : Void 
@@ -222,12 +197,12 @@ class Server extends TCPServer
 	private function addPlayer(user : ServerUser, id : Int, name : String, game : String)
 	{
 		var player = new Player();
-		player.id = id;
+		player.id = id+1;
 		player.name = name;
 		player.x = 100 + Math.random() * 600;
 		player.y = 100 + Math.random() * 400;
 		player.rotation = Math.random() * 2 * Math.PI;
-		player.color = id % colors.length;
+		player.color = (id % colors.length) + 1;
 		player.health = 3;
 		players.set(id, player);
 		
