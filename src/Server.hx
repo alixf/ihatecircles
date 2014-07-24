@@ -49,7 +49,6 @@ class Server extends TCPServer
 	public var bullets = new Map<Int, Bullet>();
 	public var enemies = new Map<Int, Enemy>();
 	public var bulletsId = 1;
-	public var enemiesId = 1;
 	public var colors = [0x0367A6, 0x048ABF, 0x47A62D, 0xF2B84B];
 	
 	public var wave = 0;
@@ -104,15 +103,18 @@ class Server extends TCPServer
 				wave++;
 				
 				var enemy = new Enemy();
-				enemy.id = nextEnemy.index;
+				enemy.id = nextEnemy.index+1;
 				
 				switch(nextEnemy.position)
 				{
-				case data.Position.Fixed(x, y) : enemy.x = x; enemy.y = y;
-				case data.Position.Random(x0, y0, x1, y1) :	enemy.x = x0 + Math.random() * (x1 - x0);
-															enemy.y = y0 + Math.random() * (y1 - y0);
-				case data.Position.Circle(x, y, angle, radius) : 	enemy.x = x + Math.cos(Math.PI * 2 * angle) * radius;
-																	enemy.y = y + Math.sin(Math.PI * 2 * angle) * radius;
+				case data.Position.Fixed(x, y) :
+					enemy.x = x; enemy.y = y;
+				case data.Position.Random(x0, y0, x1, y1) :
+					enemy.x = x0 + Math.random() * (x1 - x0);
+					enemy.y = y0 + Math.random() * (y1 - y0);
+				case data.Position.Circle(x, y, angle, radius) : 
+					enemy.x = x + Math.cos(Math.PI * 2 * angle) * radius;
+					enemy.y = y + Math.sin(Math.PI * 2 * angle) * radius;
 				}
 				
 				for (color in nextEnemy.color)
@@ -185,7 +187,7 @@ class Server extends TCPServer
 			{
 				case Protocol.CTS_ADDPLAYER :		addPlayer(p_user, Std.parseInt(p_user.id), p_data.name, p_data.game);
 				case Protocol.CTS_UPDATEPLAYER :	updatePlayer(p_user, Std.parseInt(p_user.id), p_data.x, p_data.y, p_data.rotation, p_data.velX, p_data.velY);
-				case Protocol.CTS_ADDBULLET :		addBullet(p_user, Std.parseInt(p_user.id), p_data.playerId, p_data.x, p_data.y, p_data.velX, p_data.velY);
+				case Protocol.CTS_ADDBULLET :		addBullet(p_user, Std.parseInt(p_user.id), p_data.x, p_data.y, p_data.velX, p_data.velY);
 				case Protocol.CTS_REMOVEBULLET :	removeBullet(p_user, Std.parseInt(p_user.id), p_data.id);
 				case Protocol.CTS_HITENEMY :		hitEnemy(p_user, Std.parseInt(p_user.id), p_data.enemyId, p_data.bulletId);
 				case Protocol.CTS_STARTGAME :		startGame();
@@ -197,7 +199,7 @@ class Server extends TCPServer
 	private function addPlayer(user : ServerUser, id : Int, name : String, game : String)
 	{
 		var player = new Player();
-		player.id = id+1;
+		player.id = id;
 		player.name = name;
 		player.x = 100 + Math.random() * 600;
 		player.y = 100 + Math.random() * 400;
@@ -231,14 +233,11 @@ class Server extends TCPServer
 		}
 	}
 	
-	private function addBullet(user : ServerUser, id : Int, playerId : Int, x : Float, y : Float, velX : Float, velY : Float)
+	private function addBullet(user : ServerUser, playerId : Int, x : Float, y : Float, velX : Float, velY : Float)
 	{
-		if (id != playerId)
-			return;
-
 		var bullet = new Bullet();
 		bullet.id = bulletsId++;
-		bullet.playerId = id;
+		bullet.playerId = playerId;
 		bullet.x = x;
 		bullet.y = y;
 		bullet.velX = velX;

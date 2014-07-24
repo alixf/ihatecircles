@@ -12,10 +12,18 @@ class UI
 	}
 	
 	private var element : Element;
+	private var players : Array<Element>;
 	
 	private function new()
 	{
 		element = Browser.document.getElementById("ui");
+		players =
+		[
+			Browser.document.getElementById("p1"),
+			Browser.document.getElementById("p2"),
+			Browser.document.getElementById("p3"),
+			Browser.document.getElementById("p4")
+		];
 	}
 	
 	public function log(content : String)
@@ -25,27 +33,24 @@ class UI
 	
 	public function addPlayer(id : Int, name : String)
 	{
-		var playerElement = Browser.document.getElementById("p" + (id));
-		playerElement.className = "player";
-		cast(playerElement.getElementsByClassName("name")[0],Element).innerHTML = name;
+		var playerElement = Browser.document.getElementById("p" + (id+1));
+		players[id].className = "player";
+		cast(players[id].getElementsByClassName("name")[0],Element).innerHTML = name;
 	}
 	public function removePlayer(id : Int)
 	{
-		var playerElement = Browser.document.getElementById("p" + (id));
-		playerElement.className = "player empty";
-		cast(playerElement.getElementsByClassName("score")[0], Element).innerHTML = "0";
-		cast(playerElement.getElementsByClassName("name")[0], Element).innerHTML = "Empty Slot";
+		players[id].className = "player empty";
+		cast(players[id].getElementsByClassName("score")[0], Element).innerHTML = "0";
+		cast(players[id].getElementsByClassName("name")[0], Element).innerHTML = "Empty Slot";
 	}
 	public function setPlayerScore(id : Int, score : Float)
 	{
-		var playerElement = Browser.document.getElementById("p" + (id));
-		cast(playerElement.getElementsByClassName("score")[0], Element).innerHTML = ""+Std.int(score);
+		cast(players[id].getElementsByClassName("score")[0], Element).innerHTML = ""+Std.int(score);
 	}
 	
 	public function setPlayerHealth(id : Int, health : Int)
 	{
-		var playerElement = Browser.document.getElementById("p" + (id));
-		var hps = playerElement.getElementsByClassName("hp");
+		var hps = players[id].getElementsByClassName("hp");
 		var i = 0;
 		for (hp in hps)
 			cast(hp, Element).className = i++ < health ? "hp" : "hp down";

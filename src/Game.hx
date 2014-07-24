@@ -30,16 +30,15 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 	var readyAreaImageRenderer : ImageRenderer;
 	var readyArea : Entity;
 	var gameStarted = false;
-	
-	
+
 	public var playerName : String;
 	public var customGame : Bool;
 	public var customGameName : String;
-	
+
 	public static function main()
 	{
 	}
-	
+
 	override function Build() : Void
 	{
 		playerImages = [Asset.LoadImage("playerImage0", "assets/player0.png"),
@@ -59,7 +58,7 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 						Asset.LoadImage("enemyImage4", "assets/enemy4.png")];
 		readyAreaImage = Asset.LoadImage("readyArea", "assets/readyArea.png");
 	}
-	
+
 	override function Initialize() : Void
 	{
 		var overlayElement = Browser.document.getElementById("overlay");
@@ -67,7 +66,7 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		var customGameNameInput = Browser.document.getElementById("customGameName");
 		var startGameButton = Browser.document.getElementById("startGame");
 		var playerNameInput = Browser.document.getElementById("playerName");
-		
+
 		customGameCheckbox.addEventListener("change", function(event : Event)
 		{
 			var checked : Bool = untyped __js__("event.target.checked");
@@ -82,7 +81,7 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 			Start();
 		});
 	}
-	
+
 	function Start()
 	{
 		var networkEntity = new Entity();
@@ -90,21 +89,21 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		network.Connect("ws://192.168.0.11", 2014, "", 0, false);
 		network.game = this;
 		Network.instance = network;
-		
+
 		canvasElement = cast Browser.document.getElementById("canvas");
 		canvas = canvasElement.getContext2d();
-		
+
 		stage.visible = false;
 		if(canvas != null)
 			Engine.Add(this);
 		fps = 60;
-		
+
 		haxor.physics.Physics.gravity = Vector3.zero;
-		
+
 		var backgroundEntity = new Entity();
 		var background : Background = cast backgroundEntity.AddComponent(Background);
 		background.canvas = canvas;
-		
+
 		// Ready Area
 		readyArea = new Entity();
 		readyAreaImageRenderer = readyArea.AddComponent(ImageRenderer);
@@ -112,7 +111,7 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		readyAreaImageRenderer.image = readyAreaImage;
 		readyArea.transform.position = new Vector3(400, 600 - 107);
 	}
-	
+
 	public function addPlayer(id : Int, name : String, color : Int, x : Float, y : Float, rotation : Float, self : Bool)
 	{
 		var player = new Entity();
@@ -121,36 +120,48 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		imageRenderer.image = playerImages[color];
 		imageRenderer.x = 10;
 		imageRenderer.y = 0;
-		
+
 		var textRenderer = player.AddComponent(TextRenderer);
 		textRenderer.fixedRotation = true;
 		textRenderer.canvas = canvas;
 		textRenderer.set_text(name); //FIXME
-		
+
 		var rigidbody = player.AddComponent(RigidBody);
-	
-		trace("Player : "+color);
-		
+
 		if (self)
 		{
 			var collider = player.AddComponent(Collider);
-			collider.radius = 15.0;	
+			collider.radius = 15.0;
 		}
-		
+
 		var playerBehaviour = player.AddComponent(Player);
 		playerBehaviour.game = this;
 		playerBehaviour.myId = id;
 		playerBehaviour.control = self;
 		playerBehaviour.color = color;
-		
+
 		player.transform.position = new Vector3(x, y, 0.0);
 		player.transform.rotation = Quaternion.FromAxisAngle(new Vector3(1, 0, 0), rotation);
+
+		if (self)
+		{
+			var weapon : Dynamic = null;
+			switch(color)
+			{
+			case 1 : weapon = player.AddComponent(weapons.Minigun);
+			case 2 : weapon = player.AddComponent(weapons.Shotgun);
+			case 3 : weapon = player.AddComponent(weapons.Sniper);
+			case 4 : weapon = player.AddComponent(weapons.Launcher);
+			default:
+			};	
+		}
+		
 		
 		players.set(id, player);
-		
+
 		UI.instance.addPlayer(id, name);
 	}
-	
+
 	public function updatePlayer(id : Int, x : Float, y : Float, rotation : Float, velX : Float, velY : Float)
 	{
 		var player = players.get(id);
@@ -158,7 +169,7 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		player.transform.rotation = Quaternion.FromAxisAngle(new Vector3(1, 0, 0), rotation);
 		player.rigidbody.velocity = new Vector3(velX, velY, 0.0);
 	}
-	
+
 	public function removePlayer(id : Int)
 	{
 		var player = players.get(id);
@@ -169,36 +180,36 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 			UI.instance.removePlayer(id);
 		}
 	}
-	
+
 	public function addBullet(id : Int, playerId : Int, x : Float, y : Float, velX : Float, velY : Float, own : Bool)
 	{
 		var bullet = new Entity();
 		bullet.transform.position = new Vector3(x, y, 0.0);
-		
+
 		var imageRenderer = bullet.AddComponent(ImageRenderer);
 		imageRenderer.canvas = canvas;
 		var color = players.get(playerId).GetComponent(Player).color;
 		imageRenderer.image = bulletImages[color];
-		
+
 		bullet.AddComponent(RigidBody);
 		bullet.rigidbody.velocity = new Vector3(velX, velY, 0.0);
-		
+
 		if (own)
 		{
 			var collider = bullet.AddComponent(Collider);
-			collider.radius = 10.0;	
+			collider.radius = 10.0;
 		}
-		
+
 		var bulletBehaviour = bullet.AddComponent(Bullet);
 		bulletBehaviour.myId = id;
 		bulletBehaviour.game = this;
 		bulletBehaviour.playerId = playerId;
 		bulletBehaviour.color = color;
 		bulletBehaviour.own = own;
-		
+
 		bullets.set(id, bullet);
 	}
-	
+
 	public function removeBullet(id : Int)
 	{
 		var bullet = bullets.get(id);
@@ -212,31 +223,29 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 			bullets.remove(id);
 		}
 	}
-	
+
 	public function addEnemy(id : Int, color : Int, x : Float, y : Float, velX : Float, velY : Float)
 	{
 		var enemy = new Entity();
 		enemy.transform.position = new Vector3(x, y, 0.0);
-		
+
 		var imageRenderer = enemy.AddComponent(ImageRenderer);
 		imageRenderer.canvas = canvas;
 		imageRenderer.image = enemyImages[color%enemyImages.length];
-		
-		trace("ENEMY : " + color);
-		
+
 		enemy.AddComponent(RigidBody);
 		enemy.rigidbody.velocity = new Vector3(velX, velY, 0.0);
 		var collider = enemy.AddComponent(Collider);
 		collider.radius = 50.0;
-		
+
 		var enemyBehaviour = enemy.AddComponent(Enemy);
 		enemyBehaviour.myId = id;
 		enemyBehaviour.game = this;
 		enemyBehaviour.color = color;
-		
+
 		enemies.set(id, enemy);
 	}
-	
+
 	public function removeEnemy(id : Int)
 	{
 		var enemy = enemies.get(id);
@@ -248,25 +257,25 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 			enemies.remove(id);
 		}
 	}
-	
+
 	public function startGame()
 	{
 		Actuate.update(function(x:Float,y:Float,z:Float){readyArea.transform.scale = new Vector3(x, y, z);}, 0.5, [1.0,1.0,1.0], [3.0,3.0,1.0]).ease(motion.easing.Expo.easeIn);
 		Actuate.tween(readyAreaImageRenderer, 0.5, {opacity : 0});
 		gameStarted = true;
 	}
-	
+
 	public function addScore(playerId : Int, score : Float)
 	{
 		var player = players.get(playerId).GetComponent(Player);
 		player.score += score;
 		UI.instance.setPlayerScore(playerId, player.score);
 	}
-	
+
 	public function OnFixedUpdate() : Void
 	{
 		Physics.Update();
-		
+
 		if (!gameStarted)
 		{
 			playersIn = 0.0;
@@ -281,11 +290,11 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 				playersIn = playersIn / playersCount;
 		}
 	}
-	
+
 	public function OnRender():Void
 	{
 		canvas.clearRect(0, 0, 800, 600);
-		
+
 		if (!gameStarted)
 		{
 			switch(playersIn)
@@ -297,16 +306,16 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 			case _ : readyAreaImageRenderer.opacity = 0.5 + (0.25 * Math.sin(Time.elapsed*5));
 			}
 		}
-		
+
 		//for (c in Physics.colliders)
-		//{			
+		//{
 			//canvas.beginPath();
 			//canvas.arc(c.transform.position.x + c.center.x, c.transform.position.y + c.center.y, c.radius * (c.transform.scale.x + c.transform.scale.y) / 2 +2, 0, 2 * Math.PI, false);
 			//canvas.fillStyle = 'rgba(255,255,255,0.1)';
 			//canvas.fill();
 		//}
 	}
-	
+
 	public function updateLife(playerId : Int, health : Int)
 	{
 		players.get(playerId).GetComponent(Player).health = health;

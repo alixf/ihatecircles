@@ -44,9 +44,9 @@ class Network extends haxor.net.client.Network
 		Send({code : Protocol.CTS_UPDATEPLAYER, x : x, y : y, rotation : rotation, velX : velX, velY : velY});
 	}
 	
-	public function addBullet(playerId : Int, x : Float, y : Float, velX : Float, velY : Float)
+	public function addBullet(x : Float, y : Float, velX : Float, velY : Float)
 	{
-		Send({code : Protocol.CTS_ADDBULLET, playerId : playerId, x : x, y : y, velX : velX, velY : velY});
+		Send({code : Protocol.CTS_ADDBULLET, x : x, y : y, velX : velX, velY : velY});
 	}
 	
 	public function hitEnemy(enemyId : Int, bulletId : Int)

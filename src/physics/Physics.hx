@@ -1,6 +1,7 @@
 package physics;
 
 import haxor.component.Component;
+import haxor.math.Vector3;
 
 class Physics
 {
@@ -53,5 +54,37 @@ class Physics
 				}
 			}
 		}
+	}
+	
+	public static function Raycast(x : Float, y : Float, angle : Float, ?distance : Float = 2000)
+	{
+		var x0 = x;
+		var y0 = y;
+		var x1 = x + Math.cos(angle) * distance;
+		var y1 = y + Math.sin(angle) * distance;
+		
+		var m = (y1 - y0) / (x1 - x0);
+		var b = y0 - (m * x0);
+	 
+		var collidersHit = new Array<Collider>();
+		for (collider in colliders)
+		{
+			if (collider.GetComponent(Enemy))
+			{
+			var center = collider.center;
+			var radius = collider.radius;
+			
+			var px = (m * center.y + center.x - m * b) / (m * m + 1);
+			var py = (m * m * center.y + m * center.x + b) / (m * m + 1);
+			
+			collider.entity.transform.position = new Vector3(px, py, 0.0);
+			
+			var distance = Math.sqrt((center.x - px) * (center.x - px) + (center.y - py) * (center.y - py));
+			if (distance <= radius)
+				collidersHit.push(collider);	
+			}
+		}
+		
+		return collidersHit;
 	}
 }
