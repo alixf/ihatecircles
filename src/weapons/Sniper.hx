@@ -28,10 +28,14 @@ class Sniper extends Behaviour implements IUpdateable
 		{
 			reloadClock = 0.0;
 			var originX = transform.position.x;
-			var originY= transform.position.y;
+			var originY = transform.position.y;
 			var direction = transform.rotation.euler.z;
 			var colliders = Physics.Raycast(originX, originY, direction);
-			trace("hit "+colliders.length+" !");
+			for (collider in colliders)
+			{
+				Network.instance.hitEnemy(collider.GetComponent(Enemy).myId, 0);
+			}
+			Network.instance.addLine(originX, originY, direction);
 		}
 	}
 	

@@ -192,6 +192,7 @@ class Server extends TCPServer
 				case Protocol.CTS_HITENEMY :		hitEnemy(p_user, Std.parseInt(p_user.id), p_data.enemyId, p_data.bulletId);
 				case Protocol.CTS_STARTGAME :		startGame();
 				case Protocol.CTS_HITPLAYER :		hitPlayer(p_user, Std.parseInt(p_user.id), p_data.enemyId);
+				case Protocol.CTS_ADDLINE :			addLine(p_user, Std.parseInt(p_user.id), p_data.x, p_data.y, p_data.angle);
 			}
 		}
 	}
@@ -257,30 +258,51 @@ class Server extends TCPServer
 	private function hitEnemy(user : ServerUser, userId : Int, enemyId : Int, bulletId : Int)
 	{
 		var enemy = enemies.get(enemyId);
-		var bullet = bullets.get(bulletId);
-		var bulletColor = players.get(bullet.playerId).color;
+		var bullet = bulletId > 0 ? bullets.get(bulletId) : null;
 		
-		if (enemy != null && bullet != null)
+		if (enemy != null)
 		{
-			if (enemy.color == bulletColor)
+			if (bullet != null)
 			{
-				enemy.health -= bullet.power;
-		
-				if (enemy.health < 0)
+				var bulletColor = players.get(bullet.playerId).color;
+				if (enemy.color == bulletColor)
 				{
-					for (otherUser in users)
-						otherUser.Send( { code : Protocol.STC_REMOVEMULTISCORE, bulletId : bulletId, enemyId : enemyId, score : 3, playerId : userId } );
+					enemy.health -= bullet.power;
+			
+					if (enemy.health < 0)
+					{
+						for (otherUser in users)
+							otherUser.Send( { code : Protocol.STC_REMOVEMULTISCORE, bulletId : bulletId, enemyId : enemyId, score : 3, playerId : userId } );
+					}
+					else
+					{
+						for (otherUser in users)
+							otherUser.Send( { code : Protocol.STC_REMOVEMULTISCORE, bulletId : bulletId, enemyId : 0, score : 1, playerId : userId } );
+					}
 				}
 				else
 				{
 					for (otherUser in users)
-						otherUser.Send( { code : Protocol.STC_REMOVEMULTISCORE, bulletId : bulletId, enemyId : 0, score : 1, playerId : userId } );
+						otherUser.Send( { code : Protocol.STC_REMOVEMULTISCORE, bulletId : bulletId, enemyId : 0, score : 0, playerId : userId } );
 				}
 			}
 			else
 			{
-				for (otherUser in users)
-					otherUser.Send( { code : Protocol.STC_REMOVEMULTISCORE, bulletId : bulletId, enemyId : 0, score : 0, playerId : userId } );
+				var player = players.get(userId);
+				if (enemy.color == player.color)
+				{
+					enemy.health -= 50;
+					if (enemy.health < 0)
+					{
+						for (otherUser in users)
+							otherUser.Send( { code : Protocol.STC_REMOVEMULTISCORE, bulletId : 0, enemyId : enemyId, score : 10, playerId : userId } );
+					}
+					else
+					{
+						for (otherUser in users)
+							otherUser.Send( { code : Protocol.STC_REMOVEMULTISCORE, bulletId : 0, enemyId : 0, score : 1, playerId : userId } );
+					}
+				}
 			}
 		}
 	}
@@ -292,5 +314,11 @@ class Server extends TCPServer
 		
 		for (otherUser in users)
 			otherUser.Send( { code : Protocol.STC_HITPLAYER, playerId : userId, health : player.health } );
+	}
+	
+	private function addLine(user : ServerUser, userId : Int, x : Float, y : Float, angle : Float)
+	{
+		for (otherUser in users)
+			otherUser.Send( { code : Protocol.STC_ADDLINE, playerId : userId, x : x, y : y, angle : angle } );
 	}
 }

@@ -84,7 +84,7 @@ class Player extends Behaviour implements IUpdateable implements ITriggerable
 			{
 				invincible = true;
 				Network.instance.hitPlayer(enemy.myId);
-				var ir = GetComponent(ImageRenderer);
+				var ir = GetComponent(render.ImageRenderer);
 				if(ir != null)
 					Actuate.tween(ir, 1.0, { opacity : 0.33 } ).onComplete(function() { invincible = false; Actuate.apply(ir, { opacity : 1 } ); } );
 			}

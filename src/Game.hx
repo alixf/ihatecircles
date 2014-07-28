@@ -1,18 +1,20 @@
 package;
 
+import js.Browser;
+import js.html.CanvasElement;
+import js.html.CanvasRenderingContext2D;
+import js.html.Event;
+import js.html.Image;
 import haxor.core.*;
 import haxor.math.Vector2;
 import haxor.math.Vector3;
 import haxor.component.RigidBody;
 import haxor.component.Transform;
-import js.html.CanvasElement;
-import js.html.CanvasRenderingContext2D;
-import js.Browser;
-import js.html.Event;
-import js.html.Image;
 import haxor.math.Quaternion;
-import physics.*;
 import motion.Actuate;
+import render.*;
+import weapons.*;
+import physics.*;
 
 class Game extends Application implements IRenderable implements IFixedUpdateable
 {
@@ -148,10 +150,10 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 			var weapon : Dynamic = null;
 			switch(color)
 			{
-			case 1 : weapon = player.AddComponent(weapons.Minigun);
-			case 2 : weapon = player.AddComponent(weapons.Shotgun);
-			case 3 : weapon = player.AddComponent(weapons.Sniper);
-			case 4 : weapon = player.AddComponent(weapons.Launcher);
+			case 1 : weapon = player.AddComponent(Minigun);
+			case 2 : weapon = player.AddComponent(Shotgun);
+			case 3 : weapon = player.AddComponent(Sniper);
+			case 4 : weapon = player.AddComponent(Launcher);
 			default:
 			};	
 		}
@@ -322,5 +324,18 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		if (health <= 0)
 			Actuate.apply(players.get(playerId).GetComponent(ImageRenderer), { opacity : 0.33 } ); // FIXME
 		UI.instance.setPlayerHealth(playerId, health);
+	}
+	
+	public function addLine(playerId : Int, x : Float, y : Float, angle : Float, ?distance : Float = 1000.0)
+	{
+		var line = new Entity();
+		var lineRenderer = line.AddComponent(LineRenderer);
+		lineRenderer.canvas = canvas;
+		line.transform.position = new Vector3(x, y, 0.0);
+		lineRenderer.start.x = 0.0;
+		lineRenderer.start.y = 0.0;
+		lineRenderer.end.x = Math.cos(angle) * distance;
+		lineRenderer.end.y = Math.sin(angle) * distance;
+		Actuate.tween(lineRenderer, 1, { opacity : 0 } );
 	}
 }

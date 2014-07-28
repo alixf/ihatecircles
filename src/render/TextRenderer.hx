@@ -1,3 +1,5 @@
+package render;
+
 import haxor.component.Component;
 import haxor.core.Entity;
 import haxor.core.IDisposable;

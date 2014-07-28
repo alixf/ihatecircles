@@ -31,6 +31,7 @@ class Network extends haxor.net.client.Network
 													if (data.score > 0) game.addScore(data.playerId, data.score);
 			case Protocol.STC_STARTGAME :			game.startGame();
 			case Protocol.STC_HITPLAYER : 			game.updateLife(data.playerId, data.health);
+			case Protocol.STC_ADDLINE :				game.addLine(data.playerId, data.x, data.y, data.angle);
 			}
 	}
 
@@ -62,5 +63,10 @@ class Network extends haxor.net.client.Network
 	public function hitPlayer(enemyId : Int)
 	{
 		Send( { code : Protocol.CTS_HITPLAYER, enemyId : enemyId } );
+	}
+	
+	public function addLine(x : Float, y : Float, angle : Float)
+	{
+		Send( { code : Protocol.CTS_ADDLINE, x : x, y : y, angle : angle } );
 	}
 }
