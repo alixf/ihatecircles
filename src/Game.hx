@@ -18,6 +18,9 @@ import physics.*;
 
 class Game extends Application implements IRenderable implements IFixedUpdateable
 {
+	public static var width = 800;
+	public static var height = 600;
+	
 	public var network : Network;
 	public var canvasElement : CanvasElement;
 	public var canvas : CanvasRenderingContext2D;
@@ -111,7 +114,7 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 		readyAreaImageRenderer = readyArea.AddComponent(ImageRenderer);
 		readyAreaImageRenderer.canvas = canvas;
 		readyAreaImageRenderer.image = readyAreaImage;
-		readyArea.transform.position = new Vector3(400, 600 - 107);
+		readyArea.transform.position = new Vector3(width/2, height - 107);
 	}
 
 	public function addPlayer(id : Int, name : String, color : Int, x : Float, y : Float, rotation : Float, self : Bool)
@@ -285,7 +288,7 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 			for (player in players)
 			{
 				playersCount += 1.0;
-				if (Vector3.Distance(player.transform.position, new Vector3(readyArea.transform.position.x, 600, 0)) <= 180)
+				if (Vector3.Distance(player.transform.position, new Vector3(readyArea.transform.position.x, height, 0)) <= 180)
 					playersIn += 1.0;
 			}
 			if(playersCount > 0)
@@ -295,7 +298,7 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 
 	public function OnRender():Void
 	{
-		canvas.clearRect(0, 0, 800, 600);
+		canvas.clearRect(0, 0, width, height);
 
 		if (!gameStarted)
 		{

@@ -202,8 +202,8 @@ class Server extends TCPServer
 		var player = new Player();
 		player.id = id;
 		player.name = name;
-		player.x = 100 + Math.random() * 600;
-		player.y = 100 + Math.random() * 400;
+		player.x = 800/2;
+		player.y = 600/2;
 		player.rotation = Math.random() * 2 * Math.PI;
 		player.color = (id % colors.length) + 1;
 		player.health = 3;

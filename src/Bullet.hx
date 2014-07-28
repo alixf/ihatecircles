@@ -17,6 +17,7 @@ class Bullet extends Behaviour implements IUpdateable implements ITriggerable
 	public var playerId : Int;
 	public var color : Int;
 	public var own : Bool;
+	private static var margin = 100;
 	
 	public function new(entity : Entity)
 	{
@@ -28,10 +29,10 @@ class Bullet extends Behaviour implements IUpdateable implements ITriggerable
 	{
 		transform.rotation = Quaternion.FromAxisAngle(new Vector3(1, 0, 0), Math.atan2(rigidbody.velocity.y, rigidbody.velocity.x));
 		
-		if (transform.position.x < -100 ||
-			transform.position.y < -100 ||
-			transform.position.x > 900 ||
-			transform.position.y > 700)
+		if (transform.position.x < -margin ||
+			transform.position.y < -margin ||
+			transform.position.x > Game.width+margin ||
+			transform.position.y > Game.height+margin)
 		{
 			game.removeBullet(myId);
 		}

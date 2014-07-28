@@ -24,9 +24,9 @@ class Background extends Behaviour implements IRenderable
 		//{	
 			//clock += Time.deltaTime;
 			//var time = clock;
-			//for(y in 0...Math.ceil(600/size))
+			//for(y in 0...Math.ceil(Game.height/size))
 			//{
-				//for(x in 0...Math.ceil(800/size))
+				//for(x in 0...Math.ceil(Game.width/size))
 				//{
 					//var v = Math.round(25 + Math.sin(time * 10 + x + y) * 3 + Math.sin(time * 5 + x - y) * 3);
 					//var rgb = v + (v << 8) + (v << 16);

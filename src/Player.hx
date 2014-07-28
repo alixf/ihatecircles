@@ -60,7 +60,7 @@ class Player extends Behaviour implements IUpdateable implements ITriggerable
 			
 			var margin = 10;
 			var force = rigidbody.velocity.length / 2 / Time.deltaTime;
-			var bounds = { left : 0 + margin, top : 0 + margin, right : 800 - margin, bottom : 600 - margin };
+			var bounds = { left : 0 + margin, top : 0 + margin, right : Game.width - margin, bottom : Game.height - margin };
 			if (transform.position.x < bounds.left) { 	transform.position = new Vector3(bounds.left, transform.position.y, transform.position.z); 		rigidbody.AddForce(Vector3.right.Scale(force), ForceMode.Velocity); 		}
 			if (transform.position.y < bounds.top) { 	transform.position = new Vector3(transform.position.x, bounds.top, transform.position.z); 		rigidbody.AddForce(Vector3.up.Scale(force), ForceMode.Velocity); 			}
 			if (transform.position.x > bounds.right) { 	transform.position = new Vector3(bounds.right, transform.position.y, transform.position.z); 	rigidbody.AddForce(Vector3.right.inverse.Scale(force), ForceMode.Velocity); }
