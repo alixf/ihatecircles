@@ -156,7 +156,6 @@ class Game extends Application implements IRenderable implements IFixedUpdateabl
 			case 1 : weapon = player.AddComponent(Minigun);
 			case 2 : weapon = player.AddComponent(Shotgun);
 			case 3 : weapon = player.AddComponent(Sniper);
-			case 4 : weapon = player.AddComponent(Launcher);
 			default:
 			};	
 		}

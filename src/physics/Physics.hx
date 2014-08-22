@@ -56,6 +56,20 @@ class Physics
 		}
 	}
 	
+	public static function angleDiff(a : Float, b : Float)
+	{
+		return mod((a + Math.PI -  b), 2*Math.PI) - Math.PI;
+	}
+	
+	public static function mod(a : Float, b : Float)
+	{
+		while (a >= b)
+			a -= b;
+		while (a < 0.0)
+			a += b;
+		return a;
+	}
+	
 	public static function hit(line : {x : Float, y : Float, angle : Float}, circle : {x : Float, y : Float, radius : Float})
 	{
 		var angle2 = Math.atan2(circle.y - line.y, circle.x - line.x);
@@ -80,19 +94,5 @@ class Physics
 		}
 		
 		return collidersHit;
-	}
-	
-	public static function angleDiff(a : Float, b : Float)
-	{
-		return mod((a + Math.PI -  b), 2*Math.PI) - Math.PI;
-	}
-	
-	public static function mod(a : Float, b : Float)
-	{
-		while (a >= b)
-			a -= b;
-		while (a < 0.0)
-			a += b;
-		return a;
 	}
 }

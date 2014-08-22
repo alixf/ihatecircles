@@ -5,6 +5,7 @@ import haxor.net.server.TCPServer;
 import haxor.net.server.ServerUser;
 import data.Data;
 import nodejs.fs.File;
+import Random;
 
 class Player
 {
@@ -42,6 +43,17 @@ class Enemy
 	public var velY : Float;
 	public var health : Float;
 }
+@:enum abstract RoomStatus(Int)
+{
+	var LOBBY = 0;
+	var INGAME = 1;
+	var FINISHED = 2;
+}
+typedef Room =
+{
+	status : RoomStatus,
+	users : Array<ServerUser>
+}
 
 class Server extends TCPServer
 {
@@ -49,12 +61,15 @@ class Server extends TCPServer
 	public var bullets = new Map<Int, Bullet>();
 	public var enemies = new Map<Int, Enemy>();
 	public var bulletsId = 1;
-	public var colors = [0x0367A6, 0x048ABF, 0x47A62D, 0xF2B84B];
+	public var colors = [0xFF0000, 0x000FF00, 0x0000FF];
+	public var maxUsersPerRoom = 3;
+	
+	public var publicRooms = new Map<String, Room>();
+	public var privateRooms = new Map<String, Room>();
 	
 	public var wave = 0;
 	public var timer : Timer;
 	public var startTime = 0.0;
-	public var gameStarted = false;
 	
 	static function main()
 	{
@@ -73,7 +88,7 @@ class Server extends TCPServer
 	}
 	
 	
-	private function startGame()
+	private function startGame(p_user : ServerUser, userId : Int)
 	{
 		if (gameStarted)
 			return;
@@ -190,9 +205,32 @@ class Server extends TCPServer
 				case Protocol.CTS_ADDBULLET :		addBullet(p_user, Std.parseInt(p_user.id), p_data.x, p_data.y, p_data.velX, p_data.velY);
 				case Protocol.CTS_REMOVEBULLET :	removeBullet(p_user, Std.parseInt(p_user.id), p_data.id);
 				case Protocol.CTS_HITENEMY :		hitEnemy(p_user, Std.parseInt(p_user.id), p_data.enemyId, p_data.bulletId);
-				case Protocol.CTS_STARTGAME :		startGame();
+				case Protocol.CTS_STARTGAME :		startGame(p_user, Std.parseInt(p_user.id));
 				case Protocol.CTS_HITPLAYER :		hitPlayer(p_user, Std.parseInt(p_user.id), p_data.enemyId);
 				case Protocol.CTS_ADDLINE :			addLine(p_user, Std.parseInt(p_user.id), p_data.x, p_data.y, p_data.angle);
+			}
+		}
+	}
+	
+	private function joinPlayer(user : ServerUser, id : Int, roomId : String)
+	{
+		if (roomId != "")
+		{
+			
+		}
+		else
+		{
+			var publicRoom = null;
+			for (room in publicRooms)
+				if (room.status == RoomStatus.LOBBY)
+					publicRoom = room;
+			if (publicRoom == null)
+			{
+				publicRoom = { status : RoomStatus.LOBBY, users : [] };
+				var id = "";
+				do id = Random.string(32, "abdefghijklmnopqrstuvwxyz0123456789"); while (publicRooms.exists(id));
+				
+				publicRooms.set(id, publicRoom);
 			}
 		}
 	}
